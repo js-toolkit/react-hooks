@@ -4,3 +4,5 @@ export { default as useStateChange } from './useStateChange';
 export * from './useStateChange';
 export { default as useStateInputChange } from './useStateInputChange';
 export * from './useStateInputChange';
+export { default as useSetRefs } from './useSetRefs';
+export * from './useSetRefs';
