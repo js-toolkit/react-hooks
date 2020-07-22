@@ -6,3 +6,5 @@ export { default as useStateInputChange } from './useStateInputChange';
 export * from './useStateInputChange';
 export { default as useSetRefs } from './useSetRefs';
 export * from './useSetRefs';
+export { default as useActive } from './useActive';
+export * from './useActive';

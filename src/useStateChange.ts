@@ -12,7 +12,7 @@ export function getValueOrEvent<S>(event: { value: S } | S): S {
 
 export default function useStateChange<S, E = { value: S } | S>(
   initialState: S | (() => S),
-  getValue: ValueGetter<E, S>
+  getValue: ValueGetter<E, S> = getValueOrEvent as ValueGetter<E, S>
 ): [() => S, ChangeEventHandler<E>, Dispatch<SetStateAction<S>>] {
   const [value, setValue] = useState(initialState);
   const valueRef = useRef(value);
