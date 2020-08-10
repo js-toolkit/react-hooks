@@ -1,17 +1,17 @@
 import { useCallback, useRef, useEffect } from 'react';
 import useStateChange from './useStateChange';
 
+/** [isAcive, setActive(), cancel()] */
 export type UseActiveResult = [boolean, () => void, () => void];
 
 export interface UseActiveProps {
   initialValue?: boolean;
-  disabled?: boolean;
+  /** If <= 0 then timer creation is disabled. */
   timeout: number;
 }
 
 export default function useActive({
   initialValue,
-  disabled,
   timeout = 3000,
 }: UseActiveProps): UseActiveResult {
   const [getActive, , setActive] = useStateChange(!!initialValue);
@@ -27,18 +27,19 @@ export default function useActive({
   }, [cancelTimer, getActive, setActive]);
 
   const update = useCallback(() => {
-    if (disabled) {
-      return;
-    }
     if (!getActive()) {
       setActive(true);
     }
+    // Do not set timer if disabled
+    if (timeout <= 0) {
+      return;
+    }
     cancelTimer();
     timerRef.current = window.setTimeout(() => setActive(false), timeout);
-  }, [cancelTimer, disabled, getActive, setActive, timeout]);
+  }, [cancelTimer, getActive, setActive, timeout]);
 
   useEffect(() => {
-    if (disabled) {
+    if (timeout <= 0) {
       cancel();
       return;
     }
@@ -47,7 +48,7 @@ export default function useActive({
     } else if (!initialValue && getActive()) {
       cancel();
     }
-  }, [cancel, disabled, getActive, initialValue, update]);
+  }, [cancel, getActive, initialValue, timeout, update]);
 
   useEffect(() => () => cancelTimer(), [cancelTimer]);
 
