@@ -1,0 +1,66 @@
+import { useCallback, useMemo } from 'react';
+import useStateChange from './useStateChange';
+
+export type PendingTasks<TaskKeys extends string> = { default: number } & {
+  [P in TaskKeys]?: number;
+};
+
+export interface UsePendingResult<TaskKeys extends string> {
+  isPending: (key?: keyof PendingTasks<TaskKeys>) => boolean;
+  push: (key?: keyof PendingTasks<TaskKeys>) => void;
+  pop: (key?: keyof PendingTasks<TaskKeys>) => void;
+  reset: (key?: keyof PendingTasks<TaskKeys>) => void;
+}
+
+export default function usePendingTasks<TaskKeys extends string = never>(): UsePendingResult<
+  TaskKeys
+> {
+  const [getPendingTasks, , setPendingTasks] = useStateChange<PendingTasks<TaskKeys>>({
+    default: 0,
+  });
+
+  /** true - while has at least 1 running task. */
+  const isPending = useCallback(
+    (key: keyof PendingTasks<TaskKeys> = 'default'): boolean => {
+      // console.log('calc pending', key, this.pendingTasks[key]);
+      return (getPendingTasks()[key] ?? 0) > 0;
+    },
+    [getPendingTasks]
+  );
+
+  const push = useCallback(
+    (key: keyof PendingTasks<TaskKeys> = 'default') => {
+      // console.log('push', key);
+      setPendingTasks((prev) => ({ ...prev, [key]: (getPendingTasks()[key] ?? 0) + 1 }));
+    },
+    [getPendingTasks, setPendingTasks]
+  );
+
+  const pop = useCallback(
+    (key: keyof PendingTasks<TaskKeys> = 'default') => {
+      // console.log('pop', key);
+      const value = getPendingTasks()[key] as number | undefined;
+      if (value == null || value === 0) return;
+      setPendingTasks((prev) => ({ ...prev, [key]: value - 1 }));
+    },
+    [getPendingTasks, setPendingTasks]
+  );
+
+  const reset = useCallback(
+    (key?: keyof PendingTasks<TaskKeys>) => {
+      if (key) {
+        setPendingTasks((prev) => ({ ...prev, [key]: key === 'default' ? 0 : undefined }));
+        return;
+      }
+      setPendingTasks({ default: 0 });
+    },
+    [setPendingTasks]
+  );
+
+  return useMemo<UsePendingResult<TaskKeys>>(() => ({ isPending, push, pop, reset }), [
+    reset,
+    isPending,
+    pop,
+    push,
+  ]);
+}

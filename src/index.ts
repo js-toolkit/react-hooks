@@ -8,3 +8,5 @@ export { default as useSetRefs } from './useSetRefs';
 export * from './useSetRefs';
 export { default as useActive } from './useActive';
 export * from './useActive';
+export { default as usePendingTasks } from './usePendingTasks';
+export * from './usePendingTasks';
