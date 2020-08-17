@@ -1,19 +1,23 @@
 import { useCallback, useRef, useEffect } from 'react';
 import useStateChange from './useStateChange';
 
-/** [isAcive, setActive(), cancel()] */
+/** [isActive, update(), cancel()] */
 export type UseActiveResult = [boolean, () => void, () => void];
 
 export interface UseActiveProps {
   initialValue?: boolean;
-  /** If <= 0 then timer creation is disabled. */
-  timeout: number;
+  /**
+   * Time in milliseconds after which to consider use idle.
+   * If <= 0 then timer creation is disabled.
+   */
+  timeout?: number;
 }
 
+/** Useful for tracking user interaction. */
 export default function useActive({
   initialValue,
   timeout = 3000,
-}: UseActiveProps): UseActiveResult {
+}: UseActiveProps = {}): UseActiveResult {
   const [getActive, , setActive] = useStateChange(!!initialValue);
   const timerRef = useRef(0);
 
