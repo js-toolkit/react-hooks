@@ -9,14 +9,14 @@ function isFullscreenEnabled(screenfull: typeof screenfullMaybe): screenfull is 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = (): void => {};
 
+export interface WebkitHTMLVideoElement extends HTMLVideoElement {
+  webkitEnterFullscreen?: () => void;
+  webkitExitFullscreen?: () => void;
+  webkitDisplayingFullscreen?: boolean;
+}
+
 export interface FullScreenOptions {
-  videoRef?: RefObject<
-    HTMLVideoElement & {
-      webkitEnterFullscreen?: () => void;
-      webkitExitFullscreen?: () => void;
-      webkitDisplayingFullscreen: boolean;
-    }
-  >;
+  videoRef?: RefObject<WebkitHTMLVideoElement>;
   onChange?: (isFullscreen: boolean) => void;
   onError?: (error: Event) => void;
 }
