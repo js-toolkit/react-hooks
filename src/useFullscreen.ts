@@ -11,7 +11,11 @@ const noop = (): void => {};
 
 export interface FullScreenOptions {
   videoRef?: RefObject<
-    HTMLVideoElement & { webkitEnterFullscreen?: () => void; webkitExitFullscreen?: () => void }
+    HTMLVideoElement & {
+      webkitEnterFullscreen?: () => void;
+      webkitExitFullscreen?: () => void;
+      webkitDisplayingFullscreen: boolean;
+    }
   >;
   onChange?: (isFullscreen: boolean) => void;
   onError?: (error: Event) => void;
@@ -34,8 +38,12 @@ export default function useFullscreen(
 
       const changeHandler = (): void => {
         const value = screenfull.isFullscreen;
-        setFullscreen(value);
-        onChange && onChange(value);
+        // console.log(value, document.fullscreenElement?.scrollHeight);
+        // Update state on next tick in order for wait until browser complete dom operations
+        setTimeout(() => {
+          setFullscreen(value);
+          onChange && onChange(value);
+        }, 0);
       };
 
       screenfull.on('change', changeHandler);
@@ -45,7 +53,7 @@ export default function useFullscreen(
         screenfull.off('change', changeHandler);
         onError && screenfull.off('error', onError);
         // setFullscreen(false);
-        screenfull.exit();
+        // void screenfull.exit();
       };
     }
 
@@ -69,7 +77,7 @@ export default function useFullscreen(
           video.removeEventListener('webkitbeginfullscreen', beginFullscreenHandler);
           video.removeEventListener('webkitendfullscreen', endFullscreenHandler);
           // setFullscreen(false);
-          video.webkitExitFullscreen();
+          // video.webkitExitFullscreen();
         }
       };
     }
@@ -84,11 +92,13 @@ export default function useFullscreen(
 
     if (isFullscreenEnabled(screenfullMaybe)) {
       const screenfull = screenfullMaybe;
+      if (screenfull.isFullscreen === on) return;
+      // console.log('on', on);
 
       if (on) {
-        screenfull.request(ref.current);
+        void screenfull.request(ref.current);
       } else {
-        screenfull.exit();
+        void screenfull.exit();
       }
 
       return;
@@ -96,6 +106,8 @@ export default function useFullscreen(
 
     const { current: video } = videoRef ?? {};
     if (video?.webkitEnterFullscreen && video.webkitExitFullscreen) {
+      if (video.webkitDisplayingFullscreen === on) return;
+
       if (on) {
         video.webkitEnterFullscreen();
       } else {
