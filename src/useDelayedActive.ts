@@ -1,22 +1,14 @@
 import { useCallback, useEffect, useRef } from 'react';
 import useStateChange from './useStateChange';
 
-/** [state, set(boolean, Data), updateData(Data) cancel()] */
+/** [getActive(), getData(), set(boolean, Data), updateData(Data) cancel()] */
 export type UseDelayedActiveResult<D> = [
-  // undefined extends D ? { isActive: boolean; data?: D } : { isActive: boolean; data: D },
-  boolean,
-  D,
+  () => boolean,
+  () => D,
   (isActive: boolean, data: D) => void,
   (data: D) => void,
   () => void
 ];
-
-// export interface UseDelayedActiveProps<D> {
-//   initialValue?: boolean;
-//   initialData: D;
-//   /** Time in milliseconds after which to consider use idle. */
-//   delay?: number;
-// }
 
 export type UseDelayedActiveProps<D> = {
   initialValue?: boolean;
@@ -81,7 +73,8 @@ export default function useDelayedActive<D = undefined>(
 
   useEffect(() => () => cancelTimer(), [cancelTimer]);
 
-  // return [getState(), set, cancelTimer];
-  const { isActive, data } = getState();
-  return [isActive, data as D, set, setData, cancelTimer];
+  const getActive = useCallback(() => getState().isActive, [getState]);
+  const getData = useCallback(() => getState().data as D, [getState]);
+
+  return [getActive, getData, set, setData, cancelTimer];
 }

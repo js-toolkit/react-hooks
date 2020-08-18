@@ -1,8 +1,8 @@
 import { useCallback, useRef, useEffect } from 'react';
 import useStateChange from './useStateChange';
 
-/** [isActive, update(), cancel()] */
-export type UseActiveResult = [boolean, () => void, () => void];
+/** [getActive(), update(), cancel()] */
+export type UseActiveResult = [() => boolean, () => void, () => void];
 
 export interface UseActiveProps {
   initialValue?: boolean;
@@ -56,5 +56,5 @@ export default function useActive({
 
   useEffect(() => () => cancelTimer(), [cancelTimer]);
 
-  return [getActive(), update, cancel];
+  return [getActive, update, cancel];
 }
