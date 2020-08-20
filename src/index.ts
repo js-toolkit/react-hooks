@@ -12,3 +12,5 @@ export { default as useAutoToggle } from './useAutoToggle';
 export * from './useAutoToggle';
 export { default as useToggleDebounce } from './useToggleDebounce';
 export * from './useToggleDebounce';
+export { default as useFullscreen } from './useFullscreen';
+export * from './useFullscreen';
