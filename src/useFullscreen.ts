@@ -1,5 +1,5 @@
 // Origin: https://github.com/streamich/react-use/blob/master/src/useFullscreen.ts
-import { RefObject, useEffect, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import fullscreen from '@vlazh/web-utils/fullscreen';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -11,7 +11,7 @@ export interface WebkitHTMLVideoElement extends HTMLVideoElement {
   webkitDisplayingFullscreen?: boolean;
 }
 
-export interface FullScreenOptions {
+export interface Options extends FullscreenOptions {
   videoRef?: RefObject<WebkitHTMLVideoElement>;
   onChange?: (isFullscreen: boolean) => void;
   onError?: (error: Event) => void;
@@ -19,10 +19,12 @@ export interface FullScreenOptions {
 
 export default function useFullscreen(
   ref: RefObject<Element>,
-  on: boolean | FullscreenOptions,
-  { videoRef, onChange, onError }: FullScreenOptions = {}
+  on: boolean,
+  { videoRef, onChange, onError, ...fullscreenOptions }: Options = {}
 ): boolean {
   const [isFullscreen, setFullscreen] = useState(!!on);
+  const fullscreenOptionsRef = useRef(fullscreenOptions);
+  fullscreenOptionsRef.current = fullscreenOptions;
 
   useEffect(() => {
     if (!ref.current) {
@@ -89,7 +91,7 @@ export default function useFullscreen(
       // console.log('on', on);
 
       if (on) {
-        void fullscreen.request(ref.current, typeof on === 'object' ? on : undefined);
+        void fullscreen.request(ref.current, fullscreenOptionsRef.current);
       } else {
         void fullscreen.exit();
       }
