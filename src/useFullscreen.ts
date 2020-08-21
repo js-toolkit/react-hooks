@@ -1,10 +1,6 @@
 // Origin: https://github.com/streamich/react-use/blob/master/src/useFullscreen.ts
 import { RefObject, useEffect, useState } from 'react';
-import screenfullMaybe, { Screenfull } from 'screenfull';
-
-function isFullscreenEnabled(screenfull: typeof screenfullMaybe): screenfull is Screenfull {
-  return screenfull.isEnabled;
-}
+import fullscreen from '@vlazh/web-utils/fullscreen';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = (): void => {};
@@ -23,21 +19,19 @@ export interface FullScreenOptions {
 
 export default function useFullscreen(
   ref: RefObject<Element>,
-  on: boolean,
+  on: boolean | FullscreenOptions,
   { videoRef, onChange, onError }: FullScreenOptions = {}
 ): boolean {
-  const [isFullscreen, setFullscreen] = useState(on);
+  const [isFullscreen, setFullscreen] = useState(!!on);
 
   useEffect(() => {
     if (!ref.current) {
       return noop;
     }
 
-    if (isFullscreenEnabled(screenfullMaybe)) {
-      const screenfull = screenfullMaybe;
-
+    if (fullscreen.isEnabled) {
       const changeHandler = (): void => {
-        const value = screenfull.isFullscreen;
+        const value = fullscreen.isFullscreen;
         // console.log(value, document.fullscreenElement?.scrollHeight);
         // Update state on next tick in order for wait until browser complete dom operations
         setTimeout(() => {
@@ -46,12 +40,12 @@ export default function useFullscreen(
         }, 0);
       };
 
-      screenfull.on('change', changeHandler);
-      onError && screenfull.on('error', onError);
+      fullscreen.on('change', changeHandler);
+      onError && fullscreen.on('error', onError);
 
       return () => {
-        screenfull.off('change', changeHandler);
-        onError && screenfull.off('error', onError);
+        fullscreen.off('change', changeHandler);
+        onError && fullscreen.off('error', onError);
         // setFullscreen(false);
         // void screenfull.exit();
       };
@@ -90,15 +84,14 @@ export default function useFullscreen(
       return;
     }
 
-    if (isFullscreenEnabled(screenfullMaybe)) {
-      const screenfull = screenfullMaybe;
-      if (screenfull.isFullscreen === on) return;
+    if (fullscreen.isEnabled) {
+      if (fullscreen.isFullscreen === on) return;
       // console.log('on', on);
 
       if (on) {
-        void screenfull.request(ref.current);
+        void fullscreen.request(ref.current, typeof on === 'object' ? on : undefined);
       } else {
-        void screenfull.exit();
+        void fullscreen.exit();
       }
 
       return;
