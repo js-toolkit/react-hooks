@@ -11,6 +11,7 @@ export interface UsePendingResult<TaskKeys extends string> {
   push: (key?: keyof PendingTasks<TaskKeys>) => void;
   pop: (key?: keyof PendingTasks<TaskKeys>) => void;
   reset: (key?: keyof PendingTasks<TaskKeys>) => void;
+  resetAll: () => void;
 }
 
 export default function usePendingTasks<TaskKeys extends string = never>(): UsePendingResult<
@@ -54,18 +55,20 @@ export default function usePendingTasks<TaskKeys extends string = never>(): UseP
   );
 
   const reset = useCallback(
-    (key?: keyof PendingTasks<TaskKeys>) => {
-      if (key) {
-        setPendingTasks((prev) => ({ ...prev, [key]: key === 'default' ? 0 : undefined }));
-        return;
-      }
-      setPendingTasks({ default: 0 });
+    (key: keyof PendingTasks<TaskKeys> = 'default') => {
+      if (!isPending(key)) return;
+      setPendingTasks((prev) => ({ ...prev, [key]: key === 'default' ? 0 : undefined }));
     },
-    [setPendingTasks]
+    [isPending, setPendingTasks]
   );
 
+  const resetAll = useCallback(() => {
+    if (!isAnyPending()) return;
+    setPendingTasks({ default: 0 });
+  }, [isAnyPending, setPendingTasks]);
+
   return useMemo<UsePendingResult<TaskKeys>>(
-    () => ({ isPending, isAnyPending, push, pop, reset }),
-    [isPending, isAnyPending, push, pop, reset]
+    () => ({ isPending, isAnyPending, push, pop, reset, resetAll }),
+    [isPending, isAnyPending, push, pop, reset, resetAll]
   );
 }
