@@ -2,8 +2,13 @@ import { useCallback, useEffect, useMemo } from 'react';
 import debounce from 'lodash.debounce';
 import useStateChange from './useStateChange';
 
-/** [getActive(), setActive(), cancel()] */
-export type UseAutoToggleResult = [() => boolean, () => void, () => void];
+/** [getActive(), setActive(), stopActive(), cancel()] */
+export type UseAutoToggleResult = [
+  getActive: () => boolean,
+  setActive: () => void,
+  stopActive: () => void,
+  cancel: () => void
+];
 
 export interface UseAutoToggleProps {
   initialValue?: boolean;
@@ -21,9 +26,10 @@ export default function useAutoToggle({
 }: UseAutoToggleProps = {}): UseAutoToggleResult {
   const [getActive, , setActive] = useStateChange(!!initialValue);
 
-  const deactivateDebounced = useMemo(() => {
-    return debounce(() => setActive(false), wait);
-  }, [setActive, wait]);
+  const deactivateDebounced = useMemo(() => debounce(() => setActive(false), wait), [
+    setActive,
+    wait,
+  ]);
 
   const activate = useCallback(() => {
     if (!getActive()) {
@@ -35,6 +41,13 @@ export default function useAutoToggle({
     }
     deactivateDebounced();
   }, [deactivateDebounced, getActive, setActive, wait]);
+
+  const deactivate = useCallback(() => {
+    deactivateDebounced.cancel();
+    if (getActive()) {
+      setActive(false);
+    }
+  }, [deactivateDebounced, getActive, setActive]);
 
   useEffect(() => {
     if (wait <= 0) {
@@ -50,5 +63,5 @@ export default function useAutoToggle({
   useEffect(() => () => deactivateDebounced.cancel(), [deactivateDebounced]);
 
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  return [getActive, activate, deactivateDebounced.cancel];
+  return [getActive, activate, deactivate, deactivateDebounced.cancel];
 }
