@@ -39,12 +39,13 @@ export default function useToggleDebounce<D = undefined>(
 
   const set = useCallback(
     (value: boolean, data?: D) => {
+      const nextData = data === undefined ? (getState().data as D) : data;
       if (!value) {
         activateDebounced.cancel();
-        setState({ isActive: false, data });
+        setState({ isActive: false, data: nextData });
         return;
       }
-      activateDebounced(data === undefined ? (getState().data as D) : data);
+      activateDebounced(nextData);
     },
     [activateDebounced, getState, setState]
   );
