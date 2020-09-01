@@ -4,11 +4,11 @@ import useStateChange from './useStateChange';
 
 /** [getActive(), getData(), set(boolean, Data), updateData(Data) cancel()] */
 export type UseToggleDebounceResult<D> = [
-  () => boolean,
-  () => D,
-  (isActive: boolean, data: D) => void,
-  (data: D) => void,
-  () => void
+  getActive: () => boolean,
+  getData: () => D,
+  setActive: (isActive: boolean, data?: D) => void,
+  updateData: (data: D) => void,
+  cancel: () => void
 ];
 
 export type UseToggleDebounceProps<D> = {
@@ -38,15 +38,15 @@ export default function useToggleDebounce<D = undefined>(
   }, [setState, wait]);
 
   const set = useCallback(
-    (value: boolean, data: D) => {
+    (value: boolean, data?: D) => {
       if (!value) {
         activateDebounced.cancel();
         setState({ isActive: false, data });
         return;
       }
-      activateDebounced(data);
+      activateDebounced(data === undefined ? (getState().data as D) : data);
     },
-    [activateDebounced, setState]
+    [activateDebounced, getState, setState]
   );
 
   useEffect(() => {
