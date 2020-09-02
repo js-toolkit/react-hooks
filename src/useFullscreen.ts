@@ -13,7 +13,7 @@ export interface WebkitHTMLVideoElement extends HTMLVideoElement {
 
 export interface Options extends FullscreenOptions {
   videoRef?: RefObject<WebkitHTMLVideoElement>;
-  onChange?: (isFullscreen: boolean) => void;
+  onChange?: (isFullscreen: boolean, video: boolean) => void;
   onError?: (error: Event) => void;
 }
 
@@ -38,7 +38,7 @@ export default function useFullscreen(
         // Update state on next tick in order for wait until browser complete dom operations
         setTimeout(() => {
           setFullscreen(value);
-          onChange && onChange(value);
+          onChange && onChange(value, false);
         }, 0);
       };
 
@@ -57,12 +57,12 @@ export default function useFullscreen(
     if (video?.webkitEnterFullscreen) {
       const beginFullscreenHandler = (): void => {
         setFullscreen(true);
-        onChange && onChange(true);
+        onChange && onChange(true, true);
       };
 
       const endFullscreenHandler = (): void => {
         setFullscreen(false);
-        onChange && onChange(false);
+        onChange && onChange(false, true);
       };
 
       video.addEventListener('webkitbeginfullscreen', beginFullscreenHandler);
@@ -115,7 +115,7 @@ export default function useFullscreen(
     // If 'on' but not worked
     if (on) {
       setFullscreen(false);
-      onChange && onChange(false);
+      onChange && onChange(false, false);
     }
   }, [on, onChange, ref, videoRef]);
 
