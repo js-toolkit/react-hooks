@@ -1,5 +1,5 @@
 // Origin: https://github.com/streamich/react-use/blob/master/src/useFullscreen.ts
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import fullscreen from '@vlazh/web-utils/fullscreen';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -81,7 +81,7 @@ export default function useFullscreen(
     return noop;
   }, [onChange, onError, ref, videoRef]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!ref.current) {
       return;
     }
