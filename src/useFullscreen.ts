@@ -9,18 +9,34 @@ export interface WebkitHTMLVideoElement extends HTMLVideoElement {
   webkitEnterFullscreen?: () => void;
   webkitExitFullscreen?: () => void;
   webkitDisplayingFullscreen?: boolean;
+  // webkitSupportsFullscreen?: boolean;
 }
 
 export interface Options extends FullscreenOptions {
   videoRef?: RefObject<WebkitHTMLVideoElement>;
+  toggleNativeVideoSubtitles?: boolean;
   onChange?: (isFullscreen: boolean, video: boolean) => void;
   onError?: (error: Event) => void;
+}
+
+function toggleNativeSubtitles(enabled: boolean, textTracks: TextTrackList): void {
+  console.log('toggleNativeSubtitles');
+  for (let i = 0; i < textTracks.length; i += 1) {
+    const track = textTracks[i];
+    console.log(track.label, track.mode);
+    if (enabled && track.mode === 'hidden') {
+      track.mode = 'showing';
+    } else if (!enabled && track.mode === 'showing') {
+      track.mode = 'hidden';
+    }
+  }
+  console.log('toggleNativeSubtitles end');
 }
 
 export default function useFullscreen(
   ref: RefObject<Element>,
   on: boolean,
-  { videoRef, onChange, onError, ...fullscreenOptions }: Options = {}
+  { videoRef, toggleNativeVideoSubtitles, onChange, onError, ...fullscreenOptions }: Options = {}
 ): boolean {
   const [isFullscreen, setFullscreen] = useState(!!on);
   const fullscreenOptionsRef = useRef(fullscreenOptions);
@@ -69,12 +85,10 @@ export default function useFullscreen(
       video.addEventListener('webkitendfullscreen', endFullscreenHandler);
 
       return () => {
-        if (video.webkitExitFullscreen) {
-          video.removeEventListener('webkitbeginfullscreen', beginFullscreenHandler);
-          video.removeEventListener('webkitendfullscreen', endFullscreenHandler);
-          // setFullscreen(false);
-          // video.webkitExitFullscreen();
-        }
+        video.removeEventListener('webkitbeginfullscreen', beginFullscreenHandler);
+        video.removeEventListener('webkitendfullscreen', endFullscreenHandler);
+        // setFullscreen(false);
+        // video.webkitExitFullscreen();
       };
     }
 
@@ -88,7 +102,6 @@ export default function useFullscreen(
 
     if (fullscreen.isEnabled) {
       if (fullscreen.isFullscreen === on) return;
-      // console.log('on', on);
 
       if (on) {
         void fullscreen.request(ref.current, fullscreenOptionsRef.current);
@@ -101,6 +114,10 @@ export default function useFullscreen(
 
     const { current: video } = videoRef ?? {};
     if (video?.webkitEnterFullscreen && video.webkitExitFullscreen) {
+      if (toggleNativeVideoSubtitles && video.textTracks.length > 0) {
+        toggleNativeSubtitles(on, video.textTracks);
+      }
+
       if (video.webkitDisplayingFullscreen === on) return;
 
       if (on) {
@@ -117,7 +134,7 @@ export default function useFullscreen(
       setFullscreen(false);
       onChange && onChange(false, false);
     }
-  }, [on, onChange, ref, videoRef]);
+  }, [on, onChange, ref, toggleNativeVideoSubtitles, videoRef]);
 
   return isFullscreen;
 }
