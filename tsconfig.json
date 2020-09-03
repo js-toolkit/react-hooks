@@ -4,7 +4,7 @@
     "module": "es2015",
     "isolatedModules": false,
     "outDir": "./dist",
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "declaration": true,
     "sourceMap": false,
     "incremental": true,
