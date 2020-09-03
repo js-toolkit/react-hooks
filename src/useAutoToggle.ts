@@ -11,7 +11,7 @@ export type UseAutoToggleResult = [
 ];
 
 export interface UseAutoToggleProps {
-  initialValue?: boolean;
+  value?: boolean;
   /**
    * Time in milliseconds after which an active set to false.
    * If <= 0 then timer creation is disabled.
@@ -21,10 +21,10 @@ export interface UseAutoToggleProps {
 
 /** Useful for tracking user interaction. */
 export default function useAutoToggle({
-  initialValue,
+  value: valueProp,
   wait = 3000,
 }: UseAutoToggleProps = {}): UseAutoToggleResult {
-  const [getActive, , setActive] = useStateChange(!!initialValue);
+  const [getActive, , setActive] = useStateChange(!!valueProp);
 
   const deactivateDebounced = useMemo(() => debounce(() => setActive(false), wait), [
     setActive,
@@ -53,12 +53,12 @@ export default function useAutoToggle({
     if (wait <= 0) {
       deactivateDebounced.cancel();
     }
-    if (initialValue && !getActive()) {
+    if (valueProp && !getActive()) {
       setActive(true);
-    } else if (!initialValue && getActive()) {
+    } else if (!valueProp && getActive()) {
       setActive(false);
     }
-  }, [activate, deactivateDebounced, getActive, initialValue, setActive, wait]);
+  }, [activate, deactivateDebounced, getActive, valueProp, setActive, wait]);
 
   useEffect(() => () => deactivateDebounced.cancel(), [deactivateDebounced]);
 

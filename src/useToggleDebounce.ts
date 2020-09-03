@@ -12,10 +12,10 @@ export type UseToggleDebounceResult<D> = [
 ];
 
 export type UseToggleDebounceProps<D> = {
-  initialValue?: boolean;
+  value?: boolean;
   /** Time in milliseconds after which an active set to false. */
   wait?: number;
-} & (undefined extends D ? { initialData?: D } : { initialData: D });
+} & (undefined extends D ? { data?: D } : { data: D });
 
 // type A<T = undefined> = undefined extends T ? string : boolean;
 // const v: number | string | undefined = 0 as number | string | undefined;
@@ -26,12 +26,12 @@ export type UseToggleDebounceProps<D> = {
 
 export default function useToggleDebounce<D = undefined>(
   {
-    initialValue,
-    initialData,
+    value: valueProp,
+    data: dataProp,
     wait = 1000,
   }: UseToggleDebounceProps<D> = {} as UseToggleDebounceProps<D>
 ): UseToggleDebounceResult<D> {
-  const [getState, , setState] = useStateChange({ isActive: !!initialValue, data: initialData });
+  const [getState, , setState] = useStateChange({ isActive: !!valueProp, data: dataProp });
 
   const activateDebounced = useMemo(() => {
     return debounce((data: D) => setState({ isActive: true, data }), wait);
@@ -54,12 +54,12 @@ export default function useToggleDebounce<D = undefined>(
     if (wait <= 0) {
       activateDebounced.cancel();
     }
-    if (initialValue && !getState()) {
-      setState({ isActive: true, data: initialData });
-    } else if (!initialValue && getState()) {
-      setState({ isActive: false, data: initialData });
+    if (valueProp && !getState()) {
+      setState({ isActive: true, data: dataProp });
+    } else if (!valueProp && getState()) {
+      setState({ isActive: false, data: dataProp });
     }
-  }, [activateDebounced, getState, initialData, initialValue, setState, wait]);
+  }, [activateDebounced, getState, dataProp, valueProp, setState, wait]);
 
   useEffect(() => () => activateDebounced.cancel(), [activateDebounced]);
 

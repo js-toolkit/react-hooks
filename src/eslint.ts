@@ -3,8 +3,7 @@ const config: import('eslint').Linter.Config = {
     'react-hooks/exhaustive-deps': [
       'error',
       {
-        additionalHooks:
-          '(useAutoToggle|useDoubleClick|useDoubleTap|useFullscreen|useLockBodyScroll|usePendingTasks|useSetRefs|useStateChange|useStateInputChange|useToggleDebounce)',
+        additionalHooks: '(useDoubleClick|useDoubleTap)',
       },
     ],
   },
