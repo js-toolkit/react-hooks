@@ -39,9 +39,9 @@ export default function usePendingTasks<TaskKeys extends string = never>(): UseP
   const push = useCallback(
     (key: keyof PendingTasks<TaskKeys> = 'default') => {
       // console.log('push', key);
-      setPendingTasks((prev) => ({ ...prev, [key]: (getPendingTasks()[key] ?? 0) + 1 }));
+      setPendingTasks((prev) => ({ ...prev, [key]: (prev[key] ?? 0) + 1 }));
     },
-    [getPendingTasks, setPendingTasks]
+    [setPendingTasks]
   );
 
   const pop = useCallback(
