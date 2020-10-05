@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import debounce from 'lodash.debounce';
 import useStateChange from './useStateChange';
 
@@ -11,7 +11,8 @@ export type UseAutoToggleResult = [
 ];
 
 export interface UseAutoToggleProps {
-  value?: boolean;
+  initialValue?: boolean;
+  disabled?: boolean;
   /**
    * Time in milliseconds after which an active set to false.
    * If <= 0 then timer creation is disabled.
@@ -21,26 +22,31 @@ export interface UseAutoToggleProps {
 
 /** Useful for tracking user interaction. */
 export default function useAutoToggle({
-  value: valueProp,
+  initialValue,
+  disabled,
   wait = 3000,
 }: UseAutoToggleProps = {}): UseAutoToggleResult {
-  const [getActive, , setActive] = useStateChange(!!valueProp);
+  const [getActive, , setActive] = useStateChange(!!initialValue);
+  const waitRef = useRef(wait);
+  waitRef.current = wait;
+  const disabledRef = useRef(disabled);
+  disabledRef.current = disabled;
 
-  const deactivateDebounced = useMemo(() => debounce(() => setActive(false), wait), [
+  const deactivateDebounced = useMemo(() => debounce(() => setActive(false), waitRef.current), [
     setActive,
-    wait,
   ]);
 
   const activate = useCallback(() => {
+    if (disabledRef.current) return;
     if (!getActive()) {
       setActive(true);
     }
     // Do not debounce if disabled
-    if (wait <= 0) {
+    if (waitRef.current <= 0) {
       return;
     }
     deactivateDebounced();
-  }, [deactivateDebounced, getActive, setActive, wait]);
+  }, [deactivateDebounced, getActive, setActive]);
 
   const deactivate = useCallback(() => {
     deactivateDebounced.cancel();
@@ -50,15 +56,23 @@ export default function useAutoToggle({
   }, [deactivateDebounced, getActive, setActive]);
 
   useEffect(() => {
+    if (initialValue) {
+      activate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (disabled) {
+      deactivate();
+    }
+  }, [deactivate, disabled]);
+
+  useEffect(() => {
     if (wait <= 0) {
       deactivateDebounced.cancel();
     }
-    if (valueProp && !getActive()) {
-      setActive(true);
-    } else if (!valueProp && getActive()) {
-      setActive(false);
-    }
-  }, [activate, deactivateDebounced, getActive, valueProp, setActive, wait]);
+  }, [deactivateDebounced, wait]);
 
   useEffect(() => () => deactivateDebounced.cancel(), [deactivateDebounced]);
 
