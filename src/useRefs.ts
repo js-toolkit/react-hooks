@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 
-export default function useSetRefs<T>(
+export default function useRefs<T>(
   ...refs: readonly (React.Ref<T> | undefined)[]
 ): React.RefCallback<T> {
-  const setRefs = useCallback<React.RefCallback<T>>(
+  return useCallback<React.RefCallback<T>>(
     (el) => {
       refs.forEach((r) => {
         if (typeof r === 'function') {
@@ -17,6 +17,4 @@ export default function useSetRefs<T>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     refs
   );
-
-  return setRefs;
 }
