@@ -15,6 +15,8 @@ export interface WebkitHTMLVideoElement extends HTMLVideoElement {
 export interface Options extends FullscreenOptions {
   videoRef?: RefObject<WebkitHTMLVideoElement>;
   toggleNativeVideoSubtitles?: boolean;
+  /** Update state on next tick in order for wait until browser complete dom operations. */
+  async?: boolean | number;
   onChange?: (isFullscreen: boolean, video: boolean) => void;
   onError?: (error: Event) => void;
 }
@@ -36,7 +38,14 @@ function toggleNativeSubtitles(enabled: boolean, textTracks: TextTrackList): voi
 export default function useFullscreen(
   ref: RefObject<Element>,
   on: boolean,
-  { videoRef, toggleNativeVideoSubtitles, onChange, onError, ...fullscreenOptions }: Options = {}
+  {
+    videoRef,
+    toggleNativeVideoSubtitles,
+    async,
+    onChange,
+    onError,
+    ...fullscreenOptions
+  }: Options = {}
 ): boolean {
   const [isFullscreen, setFullscreen] = useState(!!on);
   const fullscreenOptionsRef = useRef(fullscreenOptions);
@@ -48,14 +57,20 @@ export default function useFullscreen(
     }
 
     if (fullscreen.isEnabled) {
+      const update = (value: boolean): void => {
+        setFullscreen(value);
+        onChange && onChange(value, false);
+      };
+
       const changeHandler = (): void => {
         const value = fullscreen.isFullscreen;
         // console.log(value, document.fullscreenElement?.scrollHeight);
-        // Update state on next tick in order for wait until browser complete dom operations
-        setTimeout(() => {
-          setFullscreen(value);
-          onChange && onChange(value, false);
-        }, 0);
+        if (typeof async === 'number' || async === true) {
+          // Update state on next tick in order for wait until browser complete dom operations
+          setTimeout(() => update(value), typeof async === 'number' ? async : 0);
+        } else {
+          update(value);
+        }
       };
 
       fullscreen.on('change', changeHandler);
@@ -93,7 +108,7 @@ export default function useFullscreen(
     }
 
     return noop;
-  }, [onChange, onError, ref, videoRef]);
+  }, [async, onChange, onError, ref, videoRef]);
 
   useLayoutEffect(() => {
     if (!ref.current) {
