@@ -2,7 +2,7 @@
   "name": "@vlazh/react-hooks",
   "version": "1.18.0",
   "description": "React hooks",
-  "author": "Vladimir Zhukov",
+  "author": "VZH",
   "license": "MIT",
   "main": "./index.js",
   "types": "./index.d.ts",
