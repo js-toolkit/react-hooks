@@ -2,11 +2,22 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import debounce from 'lodash.debounce';
 import useStateChange from './useStateChange';
 
-/** [getActive(), setActive(), stopActive(), cancel()] */
+export interface ActivateOptions {
+  force?: boolean;
+  noWait?: boolean;
+}
+
+export interface Activate {
+  (options: ActivateOptions): void;
+  (force: boolean): void;
+  (): void;
+}
+
+/** [isActive(), activate(), deactivate(), cancel()] */
 export type UseAutoToggleResult = [
-  getActive: () => boolean,
-  setActive: () => void,
-  stopActive: () => void,
+  isActive: () => boolean,
+  activate: Activate,
+  deactivate: () => void,
   cancel: () => void
 ];
 
@@ -26,56 +37,61 @@ export default function useAutoToggle({
   disabled,
   wait = 3000,
 }: UseAutoToggleProps = {}): UseAutoToggleResult {
-  const [getActive, , setActive] = useStateChange(!!initialValue);
-  const waitRef = useRef(wait);
-  waitRef.current = wait;
+  const [isActive, , setActive] = useStateChange(!!initialValue && !disabled);
   const disabledRef = useRef(disabled);
   disabledRef.current = disabled;
 
-  const deactivateDebounced = useMemo(() => debounce(() => setActive(false), waitRef.current), [
-    setActive,
-  ]);
+  const deactivateDebounced = useMemo(() => {
+    return debounce(() => setActive(false), wait);
+  }, [setActive, wait]);
 
-  const activate = useCallback(() => {
-    if (disabledRef.current) return;
-    if (!getActive()) {
-      setActive(true);
-    }
-    // Do not debounce if disabled
-    if (waitRef.current <= 0) {
-      return;
-    }
-    deactivateDebounced();
-  }, [deactivateDebounced, getActive, setActive]);
+  const activate = useCallback(
+    (options: ActivateOptions | boolean = {}) => {
+      const { force, noWait = false } = typeof options === 'boolean' ? { force: options } : options;
+      if (
+        disabledRef.current &&
+        // Ignore non boolean value
+        (force == null || force === false || typeof force !== 'boolean')
+      ) {
+        return;
+      }
+      if (!isActive()) {
+        setActive(true);
+      }
+      // Do not debounce if disabled
+      if (wait <= 0 || noWait === true) {
+        return;
+      }
+      deactivateDebounced();
+    },
+    [deactivateDebounced, isActive, setActive, wait]
+  );
 
   const deactivate = useCallback(() => {
     deactivateDebounced.cancel();
-    if (getActive()) {
+    if (isActive()) {
       setActive(false);
     }
-  }, [deactivateDebounced, getActive, setActive]);
+  }, [deactivateDebounced, isActive, setActive]);
 
   useEffect(() => {
-    if (initialValue) {
+    if (initialValue && !disabled) {
       activate();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (disabled) {
-      deactivate();
-    }
-  }, [deactivate, disabled]);
+  // Deactivate early if disabled changed to `true`
+  useEffect(
+    () => () => {
+      !disabled && deactivate();
+    },
+    [deactivate, disabled]
+  );
 
-  useEffect(() => {
-    if (wait <= 0) {
-      deactivateDebounced.cancel();
-    }
-  }, [deactivateDebounced, wait]);
-
+  // Cancel early if wait changed or unmount
   useEffect(() => () => deactivateDebounced.cancel(), [deactivateDebounced]);
 
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  return [getActive, activate, deactivate, deactivateDebounced.cancel];
+  return [isActive, activate, deactivate, deactivateDebounced.cancel];
 }
