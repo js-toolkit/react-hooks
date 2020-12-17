@@ -60,6 +60,7 @@ export default function useAutoToggle({
       }
       // Do not debounce if disabled
       if (wait <= 0 || noWait === true) {
+        deactivateDebounced.cancel();
         return;
       }
       deactivateDebounced();
