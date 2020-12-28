@@ -37,7 +37,7 @@ export default function useAutoToggle({
   disabled,
   wait = 3000,
 }: UseAutoToggleProps = {}): UseAutoToggleResult {
-  const [isActive, , setActive] = useStateChange(!!initialValue && !disabled);
+  const [isActive, , setActive] = useStateChange(!!initialValue);
   const disabledRef = useRef(disabled);
   disabledRef.current = disabled;
 
