@@ -47,19 +47,16 @@ export default function useAutoToggle({
 
   const activate = useCallback(
     (options: ActivateOptions | boolean = {}) => {
-      const { force, noWait = false } = typeof options === 'boolean' ? { force: options } : options;
-      if (
-        disabledRef.current &&
-        // Ignore non boolean value
-        (force == null || force === false || typeof force !== 'boolean')
-      ) {
+      const { force, noWait } =
+        typeof options === 'boolean' ? { force: options, noWait: false } : options;
+      if (disabledRef.current && !force) {
         return;
       }
       if (!isActive()) {
         setActive(true);
       }
       // Do not debounce if disabled
-      if (wait <= 0 || noWait === true) {
+      if (wait <= 0 || noWait) {
         deactivateDebounced.cancel();
         return;
       }
