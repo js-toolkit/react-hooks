@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import debounce from 'lodash.debounce';
+import debounce, { DebouncedFunc } from '@vzh/ts-utils/debounce';
 import useStateChange from './useStateChange';
 
 export interface ActivateOptions {
@@ -13,12 +13,12 @@ export interface Activate {
   (): void;
 }
 
-/** [isActive(), activate(), deactivate(), cancel()] */
+/** [isActive(), activate(), deactivate(), debounced] */
 export type UseAutoToggleResult = [
   isActive: () => boolean,
   activate: Activate,
   deactivate: () => void,
-  cancel: () => void
+  debounced: DebouncedFunc<VoidFunction>
 ];
 
 export interface UseAutoToggleProps {
@@ -90,6 +90,5 @@ export default function useAutoToggle({
   // Cancel early if wait changed or unmount
   useEffect(() => () => deactivateDebounced.cancel(), [deactivateDebounced]);
 
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  return [isActive, activate, deactivate, deactivateDebounced.cancel];
+  return [isActive, activate, deactivate, deactivateDebounced];
 }
