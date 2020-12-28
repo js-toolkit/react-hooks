@@ -42,8 +42,8 @@ export default function useAutoToggle({
   disabledRef.current = disabled;
 
   const deactivateDebounced = useMemo(() => {
-    return debounce(() => setActive(false), wait);
-  }, [setActive, wait]);
+    return debounce(() => isActive() && setActive(false), wait);
+  }, [isActive, setActive, wait]);
 
   const activate = useCallback(
     (options: ActivateOptions | boolean = {}) => {
