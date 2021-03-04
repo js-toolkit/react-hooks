@@ -8,8 +8,8 @@
     "declaration": true,
     "sourceMap": false,
     "incremental": true,
-    "typeRoots": ["./@types", "./node_modules/@types", "./node_modules/@vzh/ts-utils/@types"],
+    "typeRoots": ["./@types", "./node_modules/@types"],
     "diagnostics": true
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*", "./node_modules/@vzh/ts-utils/types"]
 }
