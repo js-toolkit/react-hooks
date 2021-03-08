@@ -1,6 +1,6 @@
 {
   "name": "@vlazh/react-hooks",
-  "version": "1.22.0",
+  "version": "1.22.1",
   "description": "React hooks",
   "author": "VZH",
   "license": "MIT",
@@ -24,15 +24,15 @@
     "major-publish": "npm run build && npm version major && npm run copy:configs && npm publish ./dist/ && git push origin master --follow-tags"
   },
   "devDependencies": {
-    "@types/eslint": "^7.2.6",
+    "@types/eslint": "^7.2.7",
     "@types/lodash.debounce": "^4.0.6",
-    "@types/node": "^14.14.31",
-    "@types/react": "17.0.2",
+    "@types/node": "^14.14.32",
+    "@types/react": "17.0.3",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
-    "@vlazh/web-utils": "^1.17.1",
     "@vlazh/configs": "^3.73.8",
     "@vlazh/ts-utils": "^1.25.0",
+    "@vlazh/web-utils": "^1.18.1",
     "copyfiles": "^2.4.1",
     "eslint": "^7.21.0",
     "eslint-config-airbnb": "^18.2.1",
@@ -47,7 +47,7 @@
     "react": "^17.0.1",
     "recoil": "^0.1.3",
     "rimraf": "^3.0.2",
-    "typescript": "^4.2.2"
+    "typescript": "^4.2.3"
   },
   "peerDependencies": {
     "react": ">= 16.8"
