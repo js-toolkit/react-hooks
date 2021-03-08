@@ -1,5 +1,5 @@
 {
-  "extends": "@vzh/configs/ts/common.tsconfig.json",
+  "extends": "@vlazh/configs/ts/common.tsconfig.json",
   "compilerOptions": {
     "module": "es2015",
     "isolatedModules": false,
@@ -11,5 +11,5 @@
     "typeRoots": ["./@types", "./node_modules/@types"],
     "diagnostics": true
   },
-  "include": ["./src/**/*", "./node_modules/@vzh/ts-utils/types"]
+  "include": ["./src/**/*", "./node_modules/@vlazh/ts-utils/types"]
 }

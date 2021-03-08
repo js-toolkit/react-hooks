@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import debounce, { DebouncedFunc } from '@vzh/ts-utils/debounce';
+import debounce, { DebouncedFunc } from '@vlazh/ts-utils/debounce';
 import useStateChange from './useStateChange';
 
 export interface ActivateOptions {

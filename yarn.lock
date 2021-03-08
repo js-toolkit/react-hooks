@@ -197,20 +197,20 @@
     "@typescript-eslint/types" "4.16.1"
     eslint-visitor-keys "^2.0.0"
 
+"@vlazh/configs@^3.73.8":
+  version "3.73.10"
+  resolved "https://npm.pkg.github.com/download/@vlazh/configs/3.73.10/02a9d4d03b572fc76583839fbd2d3d5befe82d3624f76a4ef247d4b3f49f74c3#2076acdf80514d69735220a994f521a86fdfde63"
+  integrity sha512-dYj7cg3jRdjzMQz8ax2ovZuxkm2U0A4hvY5XoW9xQNIc3rqC9vXvQ2mL/PqcpNN98pnWcbgnfiblIc+MRygekw==
+
+"@vlazh/ts-utils@^1.25.0":
+  version "1.26.2"
+  resolved "https://npm.pkg.github.com/download/@vlazh/ts-utils/1.26.2/bf6a7d085477841fb62a810bbdceafebafe1cbb22e1dd3c2a744abb6b41b4a38#0c2aa9f8b9566f3b74ed65b6de75245088871cba"
+  integrity sha512-+boWZoEAOdq5qjt8TzFShWLcC3n9ITJ6lOe3g00yEjVrTVSebMSzLUDikymI4pRKGCqq4YfUmS0WM7F52fvieQ==
+
 "@vlazh/web-utils@^1.17.1":
   version "1.17.1"
   resolved "https://npm.pkg.github.com/download/@vlazh/web-utils/1.17.1/442ff6ffd4e047c743ce1be3c8d2a0e35b68ce829a895bb1236b7e1fa02a4321#6d2c1d432181e270d282e6527e36478ee1a8bc6b"
   integrity sha512-avUcPS2LGap0/Pll3Bz+g2JoSyISFU1AWyVCWQ8FjO+IZcyPrWX8nz3WZ9TKFUbjppZ+sFbFje5ddL2//S4kew==
-
-"@vzh/configs@^3.73.8":
-  version "3.73.8"
-  resolved "https://registry.yarnpkg.com/@vzh/configs/-/configs-3.73.8.tgz#5b89cce15e3ba3c14c968080b4f6596ee7a00b21"
-  integrity sha512-4wrlbrn8ghyshZC1w7ElgajXV4yOt19rvnaSt3EVNz0O+OW5/eRokvUpLUhf3eF3c5bUdui+96YNURkgveupyA==
-
-"@vzh/ts-utils@^1.25.0":
-  version "1.25.0"
-  resolved "https://registry.yarnpkg.com/@vzh/ts-utils/-/ts-utils-1.25.0.tgz#7ca2747097265397f4a702eef0139b8fa60b26a5"
-  integrity sha512-BmvdGXjw/k+n1leIQwtkwaLA5/esKtDu80QtUTf2x66X/3xHamfVTnmIUq1BqQSogfNSGYZhdsC2YqmDD/AUWQ==
 
 acorn-jsx@^5.3.1:
   version "5.3.1"
