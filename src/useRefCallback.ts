@@ -5,10 +5,10 @@ interface RefCallback<T extends AnyFunction> {
   caller: T;
 }
 
-export default function useRefCallback<T extends AnyFunction, C = ThisParameterType<T>>(
-  callback: T,
-  context: C | undefined = undefined
-): T {
+export default function useRefCallback<
+  T extends AnyFunction,
+  C extends Exclude<ThisParameterType<T>, unknown> = Exclude<ThisParameterType<T>, unknown>
+>(callback: T, context: C | undefined = undefined): T {
   const ref = useRef<RefCallback<T>>();
 
   if (!ref.current) {
