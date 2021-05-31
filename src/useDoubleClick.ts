@@ -12,7 +12,7 @@ export interface UseDoubleClickProps<T = Element> {
 
 export default function useDoubleClick<T = Element>(
   factory: () => UseDoubleClickProps<T>,
-  deps?: React.DependencyList
+  deps: React.DependencyList = []
 ): React.MouseEventHandler<T> {
   const debounceClickedRef = useRef(false);
 
