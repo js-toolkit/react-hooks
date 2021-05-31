@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import useStateChange from './useStateChange';
+import useUpdateState from './useUpdateState';
 
 export type PendingTasks<TaskKeys extends string> = { default: number } & {
   [P in TaskKeys]?: number;
@@ -14,10 +14,10 @@ export interface UsePendingResult<TaskKeys extends string> {
   resetAll: () => void;
 }
 
-export default function usePendingTasks<TaskKeys extends string = never>(): UsePendingResult<
-  TaskKeys
-> {
-  const [getPendingTasks, , setPendingTasks] = useStateChange<PendingTasks<TaskKeys>>({
+export default function usePendingTasks<
+  TaskKeys extends string = never
+>(): UsePendingResult<TaskKeys> {
+  const [getPendingTasks, setPendingTasks] = useUpdateState<PendingTasks<TaskKeys>>({
     default: 0,
   });
 

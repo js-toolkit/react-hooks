@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import debounce from 'lodash.debounce';
-import useStateChange from './useStateChange';
+import useUpdateState from './useUpdateState';
 
 /** [getActive(), getData(), set(boolean, Data), updateData(Data) cancel()] */
 export type UseToggleDebounceResult<D> = [
@@ -31,7 +31,7 @@ export default function useToggleDebounce<D = undefined>(
     wait = 1000,
   }: UseToggleDebounceProps<D> = {} as UseToggleDebounceProps<D>
 ): UseToggleDebounceResult<D> {
-  const [getState, , setState] = useStateChange({ isActive: !!valueProp, data: dataProp });
+  const [getState, setState] = useUpdateState({ isActive: !!valueProp, data: dataProp });
 
   const activateDebounced = useMemo(() => {
     return debounce((data: D) => setState({ isActive: true, data }), wait);

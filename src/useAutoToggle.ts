@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import debounce, { DebouncedFunc } from '@js-toolkit/ts-utils/debounce';
-import useStateChange from './useStateChange';
+import useUpdateState from './useUpdateState';
 
 export interface ActivateOptions {
   force?: boolean;
@@ -37,7 +37,7 @@ export default function useAutoToggle({
   disabled,
   wait = 3000,
 }: UseAutoToggleProps = {}): UseAutoToggleResult {
-  const [isActive, , setActive] = useStateChange(!!initialValue);
+  const [isActive, setActive] = useUpdateState(!!initialValue);
   const disabledRef = useRef(disabled);
   disabledRef.current = disabled;
 

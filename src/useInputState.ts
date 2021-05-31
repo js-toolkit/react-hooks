@@ -1,7 +1,7 @@
 import { SetStateAction, Dispatch } from 'react';
-import useChangeEventHandler, { ValueGetter, ChangeEventHandler } from './useStateChange';
+import useUpdateState, { StateGetter, UpdateState } from './useUpdateState';
 
-export const getInputChangeEventValue: ValueGetter<
+export const getInputChangeEventValue: StateGetter<
   React.ChangeEvent<HTMLInputElement> | { value: string } | string,
   string
 > = (event) => {
@@ -13,12 +13,13 @@ export const getInputChangeEventValue: ValueGetter<
   throw new Error(`Unsupported event '${event}'`);
 };
 
-export default function useStateInputChange(
+export default function useInputState(
   initialState: string | (() => string)
 ): [
   () => string,
-  ChangeEventHandler<React.ChangeEvent<HTMLInputElement> | { value: string } | string>,
+  UpdateState<React.ChangeEvent<HTMLInputElement> | { value: string } | string>,
   Dispatch<SetStateAction<string>>
 ] {
-  return useChangeEventHandler(initialState, getInputChangeEventValue);
+  const [get, set, update] = useUpdateState(initialState, getInputChangeEventValue);
+  return [get, update, set];
 }
