@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 
-export default function useRefUpdate<T>(value: T): React.MutableRefObject<T> {
-  const ref = useRef<T>(value);
+export default (function useRefUpdate(value: unknown): unknown {
+  const ref = useRef(value);
   ref.current = value;
   return ref;
-}
+} as typeof useRef);
