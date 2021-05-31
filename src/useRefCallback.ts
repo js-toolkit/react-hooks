@@ -14,7 +14,7 @@ export default function useRefCallback<
   if (!ref.current) {
     ref.current = {
       callee: callback,
-      // eslint-disable-next-line object-shorthand, func-names
+      // eslint-disable-next-line func-names
       caller: function (...args) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return ref.current!.callee.apply(context, args) as unknown;
