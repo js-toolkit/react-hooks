@@ -1,4 +1,5 @@
 import { useState, useCallback, SetStateAction, Dispatch } from 'react';
+import useRefCallback from './useRefCallback';
 import useRefUpdate from './useRefUpdate';
 
 export type StateGetter<E, S> = (wrappedOrValue: E) => S;
@@ -17,12 +18,8 @@ export default function useUpdateState<S, E = { value: S } | S>(
 ): [getState: () => S, setState: Dispatch<SetStateAction<S>>, updateState: UpdateState<E>] {
   const [state, setState] = useState(initialState);
   const stateRef = useRefUpdate(state);
-  const stateGetterRef = useRefUpdate(stateGetter);
 
-  const updateState = useCallback<UpdateState<E>>(
-    (event) => setState(stateGetterRef.current(event)),
-    [stateGetterRef]
-  );
+  const updateState = useRefCallback<UpdateState<E>>((event) => setState(stateGetter(event)));
 
   const getState = useCallback(() => stateRef.current, [stateRef]);
 
