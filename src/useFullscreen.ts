@@ -1,4 +1,4 @@
-// Origin: https://github.com/streamich/react-use/blob/master/src/useFullscreen.ts
+// Inspired of: https://github.com/streamich/react-use/blob/master/src/useFullscreen.ts
 import { RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import fullscreen from '@js-toolkit/web-utils/fullscreen';
 
