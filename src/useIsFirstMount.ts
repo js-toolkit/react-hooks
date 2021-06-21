@@ -7,7 +7,7 @@ export default function useIsFirstMount(): () => boolean {
   useEffect(() => {
     if (!firstRef.current) return;
     countRef.current += 1;
-    if (countRef.current > 0) {
+    if (countRef.current > 1) {
       firstRef.current = false;
     }
   }, []);
