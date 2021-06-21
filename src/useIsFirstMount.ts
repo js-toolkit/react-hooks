@@ -1,16 +1,15 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 
 export default function useIsFirstMount(): () => boolean {
   const firstRef = useRef(true);
   const countRef = useRef(0);
 
-  useEffect(() => {
-    if (!firstRef.current) return;
+  if (firstRef.current) {
     countRef.current += 1;
     if (countRef.current > 1) {
       firstRef.current = false;
     }
-  }, []);
+  }
 
   return useCallback(() => firstRef.current, []);
 }
