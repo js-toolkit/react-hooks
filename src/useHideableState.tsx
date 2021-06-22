@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
-import useFirstRender from './useFirstRender';
+import React, { useCallback, useLayoutEffect, useMemo } from 'react';
+import useIsFirstMount from './useIsFirstMount';
 import useUpdateState from './useUpdateState';
 
 export interface HideableState {
@@ -7,22 +7,34 @@ export interface HideableState {
   readonly visible: boolean;
 }
 
-export type UseHideableStateProps = HideableState;
-
 export type UseHideableStateResult = HideableState & { hide: VoidFunction; disable: VoidFunction };
 
-export default function useHideableState(
+function useHideableState(
+  state: HideableState | ((prevState?: HideableState) => HideableState),
+  updateStateDeps?: React.DependencyList
+): UseHideableStateResult;
+
+function useHideableState(
   initialState: HideableState | (() => HideableState),
-  updateState?: (prevState: HideableState) => HideableState,
-  updateStateDeps: React.DependencyList = []
+  updateState: (prevState: HideableState) => HideableState,
+  updateStateDeps: React.DependencyList
+): UseHideableStateResult;
+
+function useHideableState(
+  initialState: HideableState | (() => HideableState),
+  updateStateOrDeps?: ((prevState: HideableState) => HideableState) | React.DependencyList,
+  updateStateDeps?: React.DependencyList
 ): UseHideableStateResult {
   const [getState, setState] = useUpdateState(initialState);
-  const firstRender = useFirstRender();
+  const isFirstMount = useIsFirstMount();
 
-  useEffect(() => {
-    !firstRender && updateState && setState(updateState);
+  const deps = Array.isArray(updateStateOrDeps) ? updateStateOrDeps : updateStateDeps ?? [];
+  const updateState = typeof updateStateOrDeps === 'function' ? updateStateOrDeps : initialState;
+
+  useLayoutEffect(() => {
+    !isFirstMount() && setState(updateState);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, updateStateDeps);
+  }, deps);
 
   const hide = useCallback(() => {
     if (!getState().visible) return;
@@ -49,3 +61,5 @@ export default function useHideableState(
     [disable, getState, hide]
   );
 }
+
+export default useHideableState;
