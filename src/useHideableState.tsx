@@ -1,7 +1,6 @@
-import React, { useCallback, useLayoutEffect, useMemo } from 'react';
-import useIsFirstMount from './useIsFirstMount';
+import React, { useCallback, useMemo } from 'react';
 import useRefCallback from './useRefCallback';
-import useUpdateState from './useUpdateState';
+import useUpdatedState from './useUpdatedState';
 
 export interface HideableState {
   readonly enabled: boolean;
@@ -18,13 +17,7 @@ export default function useHideableState(
   state: HideableState | ((prevState?: HideableState) => HideableState),
   updateStateDeps: React.DependencyList = []
 ): UseHideableStateResult {
-  const [getState, setState] = useUpdateState(state);
-  const isFirstMount = useIsFirstMount();
-
-  useLayoutEffect(() => {
-    !isFirstMount() && setState(state);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, updateStateDeps);
+  const [getState, setState] = useUpdatedState(state, updateStateDeps);
 
   const show = useCallback(() => {
     if (getState().visible) return;
