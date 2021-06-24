@@ -11,12 +11,15 @@ type UpdateState<S> = (
 ) => void;
 
 export default function useRefState<S>(
-  initialState: S
+  initialState: S | (() => S)
 ): [getState: () => S, setState: React.Dispatch<React.SetStateAction<S>>, patch: UpdateState<S>] {
   const update = useUpdate();
 
   const stateRef = useRef<S>(
-    typeof initialState === 'object' && initialState !== null ? { ...initialState } : initialState
+    (typeof initialState === 'object' && initialState !== null && { ...initialState }) ||
+      typeof initialState === 'function'
+      ? (initialState as () => S)()
+      : initialState
   );
 
   const getState = useCallback(() => stateRef.current, []);
