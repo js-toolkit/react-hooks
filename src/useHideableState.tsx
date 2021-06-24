@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo } from 'react';
-import useRefCallback from './useRefCallback';
 import useUpdatedState from './useUpdatedState';
 
 export interface HideableState {
@@ -29,11 +28,11 @@ export default function useHideableState(
     setState((prev) => ({ ...prev, visible: false }));
   }, [getState, setState]);
 
-  const disable = useRefCallback(() => {
+  const disable = useCallback(() => {
     const { enabled, visible } = getState();
     if (!enabled && !visible) return;
     setState((prev) => ({ ...prev, enabled: false, visible: false }));
-  });
+  }, [getState, setState]);
 
   return useMemo(
     () => ({
