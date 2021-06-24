@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import useUpdate from './useUpdate';
 
 type UpdateState<S> = (
@@ -12,16 +12,27 @@ type UpdateState<S> = (
 
 export default function useRefState<S>(
   initialState: S
-): [getState: () => S, updateState: UpdateState<S>] {
+): [getState: () => S, setState: React.Dispatch<React.SetStateAction<S>>, patch: UpdateState<S>] {
   const update = useUpdate();
 
   const stateRef = useRef<S>(
     typeof initialState === 'object' && initialState !== null ? { ...initialState } : initialState
   );
 
-  const get = useCallback(() => stateRef.current, []);
+  const getState = useCallback(() => stateRef.current, []);
 
-  const set = useCallback(
+  const setState = useCallback(
+    (state: React.SetStateAction<S>) => {
+      stateRef.current =
+        typeof state === 'function'
+          ? (state as React.ReducerWithoutAction<S>)(stateRef.current)
+          : state;
+      update();
+    },
+    [update]
+  );
+
+  const patchState = useCallback(
     (patch: Partial<S>) => {
       if (patch != null && typeof patch === 'object') {
         Object.assign(stateRef.current, patch);
@@ -33,5 +44,5 @@ export default function useRefState<S>(
     [update]
   );
 
-  return [get, set];
+  return [getState, setState, patchState];
 }
