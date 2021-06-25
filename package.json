@@ -20,8 +20,7 @@
     "build-to-tutoron": "tsc --project ./tsconfig.json --outDir '/home/vladimir/dev/sources/tutoron/node_modules/@js-toolkit/react-hooks'",
     "build-to-player": "tsc --project ./tsconfig.json --outDir '/home/vladimir/dev/sources/player/node_modules/@js-toolkit/react-hooks'",
     "patch-publish": "npm run build && npm version patch && npm run copy:configs && npm publish ./dist/ && git push origin master --follow-tags",
-    "minor-publish": "npm run build && npm version minor && npm run copy:configs && npm publish ./dist/ && git push origin master --follow-tags",
-    "major-publish": "npm run build && npm version major && npm run copy:configs && npm publish ./dist/ && git push origin master --follow-tags"
+    "minor-publish": "npm run build && npm version minor && npm run copy:configs && npm publish ./dist/ && git push origin master --follow-tags"
   },
   "devDependencies": {
     "@js-toolkit/configs": "^3.77.5",
