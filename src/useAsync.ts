@@ -33,8 +33,9 @@ export type UseAsyncProps<F extends AnyAsyncFunction> = Partial<StateByAsyncFn<F
 };
 
 type UseAsyncResult<F extends AnyAsyncFunction> = [
-  getState: () => StateByAsyncFn<F>,
-  call: (...args: Parameters<F>) => ReturnType<F>
+  state: StateByAsyncFn<F>,
+  call: (...args: Parameters<F>) => ReturnType<F>,
+  getState: () => StateByAsyncFn<F>
 ];
 
 export default function useAsync<F extends AnyAsyncFunction>(
@@ -122,5 +123,5 @@ export default function useAsync<F extends AnyAsyncFunction>(
     deps
   );
 
-  return [getState, call];
+  return [getState(), call, getState];
 }
