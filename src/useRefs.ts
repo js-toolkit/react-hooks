@@ -16,11 +16,9 @@ export default function useRefs<T>(
   const withCallbacks = Array.isArray(args[0]);
   // const onMount = withCallbacks ? [args[1] as VoidFunction] : undefined;
   // const onUnmount = withCallbacks ? [args[2] as VoidFunction] : undefined;
-  const [onMount, onUnmount] = withCallbacks
-    ? [args[1] as VoidFunction, args[2] as VoidFunction]
-    : [];
-
-  const refs = (withCallbacks ? args[0] : args) as (React.Ref<T> | undefined)[];
+  const [refs, onMount, onUnmount] = withCallbacks
+    ? [args[0] as (React.Ref<T> | undefined)[], args[1] as VoidFunction, args[2] as VoidFunction]
+    : [args];
 
   return useCallback<React.RefCallback<T>>(
     (el) => {
