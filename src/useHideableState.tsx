@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import useUpdatedState from './useUpdatedState';
+import useUpdatedRefState from './useUpdatedRefState';
 
 export interface HideableState {
   readonly enabled: boolean;
@@ -16,7 +16,7 @@ export default function useHideableState(
   state: HideableState | ((prevState?: HideableState) => HideableState),
   updateStateDeps: React.DependencyList = []
 ): UseHideableStateResult {
-  const [getState, setState] = useUpdatedState(state, updateStateDeps);
+  const [getState, setState] = useUpdatedRefState(state, updateStateDeps);
 
   const show = useCallback(() => {
     if (getState().visible) return;
