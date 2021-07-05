@@ -20,7 +20,7 @@ export default function useHideableState(
 
   const show = useCallback(() => {
     if (getState().visible) return;
-    setState((prev) => ({ ...prev, visible: true }));
+    setState((prev) => ({ ...prev, enabled: true, visible: true }));
   }, [getState, setState]);
 
   const hide = useCallback(() => {
