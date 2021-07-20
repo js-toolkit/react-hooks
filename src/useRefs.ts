@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 export default function useRefs<T>(
   refs: readonly (React.Ref<T> | undefined)[],
-  onMount?: VoidFunction,
+  onMount?: (instance: T) => void,
   onUnmount?: VoidFunction
 ): React.RefCallback<T>;
 
@@ -11,27 +11,31 @@ export default function useRefs<T>(...refs: (React.Ref<T> | undefined)[]): React
 export default function useRefs<T>(
   ...args:
     | (React.Ref<T> | undefined)[]
-    | [readonly (React.Ref<T> | undefined)[], VoidFunction?, VoidFunction?]
+    | [readonly (React.Ref<T> | undefined)[], ((instance: T) => void)?, VoidFunction?]
 ): React.RefCallback<T> {
   const withCallbacks = Array.isArray(args[0]);
   // const onMount = withCallbacks ? [args[1] as VoidFunction] : undefined;
   // const onUnmount = withCallbacks ? [args[2] as VoidFunction] : undefined;
   const [refs, onMount, onUnmount] = withCallbacks
-    ? [args[0] as (React.Ref<T> | undefined)[], args[1] as VoidFunction, args[2] as VoidFunction]
+    ? [
+        args[0] as (React.Ref<T> | undefined)[],
+        args[1] as (instance: T) => void,
+        args[2] as VoidFunction,
+      ]
     : [args];
 
   return useCallback<React.RefCallback<T>>(
-    (el) => {
+    (instance) => {
       refs.forEach((r) => {
         if (typeof r === 'function') {
-          r(el);
+          (r as React.RefCallback<T>)(instance);
         } else if (r) {
           // eslint-disable-next-line no-param-reassign
-          (r as React.MutableRefObject<T | null>).current = el;
+          (r as React.MutableRefObject<T | null>).current = instance;
         }
       });
-      if (el == null) onUnmount && onUnmount();
-      else onMount && onMount();
+      if (instance == null) onUnmount && onUnmount();
+      else onMount && onMount(instance);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     refs
