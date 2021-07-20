@@ -3,7 +3,9 @@ import debounce, { DebouncedFunc } from '@js-toolkit/ts-utils/debounce';
 import useUpdateState from './useUpdateState';
 
 export interface ActivateOptions {
+  /** Ignore disabled option. */
   force?: boolean;
+  /** Disable auto toggle. */
   noWait?: boolean;
 }
 
@@ -25,7 +27,7 @@ export interface UseAutoToggleProps {
   initialValue?: boolean;
   disabled?: boolean;
   /**
-   * Time in milliseconds after which an active set to false.
+   * Time in milliseconds after which an active state set to false.
    * If <= 0 then timer creation is disabled.
    */
   wait?: number;
