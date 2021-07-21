@@ -27,9 +27,7 @@ export default function useRefState<S>(
 
   const stateRef = useRef<S>(
     (typeof initialState === 'object' && initialState !== null && { ...initialState }) ||
-      typeof initialState === 'function'
-      ? (initialState as () => S)()
-      : initialState
+      (typeof initialState === 'function' ? (initialState as () => S)() : initialState)
   );
 
   const getState = useCallback(() => stateRef.current, []);
