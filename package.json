@@ -16,7 +16,8 @@
   "scripts": {
     "clean": "rimraf dist/*",
     "copy:configs": "copyfiles package.json .npmignore README.md LICENSE ./dist/",
-    "build": "npm run clean && tsc --project ./tsconfig.json",
+    "minify": "node-utils-minify --replace ./dist",
+    "build": "npm run clean && tsc --build ./tsconfig.json && npm run minify",
     "build-to-tutoron": "tsc --project ./tsconfig.json --outDir '/home/vladimir/dev/sources/tutoron/node_modules/@js-toolkit/react-hooks'",
     "build-to-player": "tsc --project ./tsconfig.json --outDir '/home/vladimir/dev/sources/player/node_modules/@js-toolkit/react-hooks'",
     "patch-publish": "npm run build && npm version patch && npm run copy:configs && npm publish ./dist/ && git push origin master --follow-tags",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@js-toolkit/configs": "^3.77.5",
+    "@js-toolkit/node-utils": "^1.1.3",
     "@js-toolkit/ts-utils": "^1.34.0",
     "@js-toolkit/web-utils": "^1.22.1",
     "@types/eslint": "^7.2.13",
@@ -46,7 +48,9 @@
     "react": "^17.0.2",
     "recoil": "^0.3.1",
     "rimraf": "^3.0.2",
-    "typescript": "^4.3.4"
+    "terser": "^5.7.1",
+    "typescript": "^4.3.4",
+    "yargs": "^17.0.1"
   },
   "peerDependencies": {
     "react": ">= 16.8"
