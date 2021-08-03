@@ -5,9 +5,13 @@ interface ExtendFactory<S, T> {
 }
 
 export default function useExtendedState<S, E>(
-  stateMethods: [getState: () => S, setState: React.Dispatch<React.SetStateAction<S>>],
+  stateMethods: [
+    getState: () => S,
+    setState: React.Dispatch<React.SetStateAction<S>>,
+    ...rest: unknown[]
+  ],
   extend: ExtendFactory<S, E>
-): [extended: E, getState: () => S, setState: React.Dispatch<React.SetStateAction<S>>] {
+): [E, ...typeof stateMethods] {
   const extended = useRef<E>(undefined as unknown as E);
 
   if (!extended.current) {
