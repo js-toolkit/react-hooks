@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import debounce from 'lodash.debounce';
+import useRefCallback from './useRefCallback';
 
 export interface UseDoubleClickProps<T = Element> {
   onClick?: React.MouseEventHandler<T>;
@@ -38,27 +39,24 @@ export default function useDoubleClick<T = Element>(
     [clickHandlerDebounced]
   );
 
-  return useCallback<React.MouseEventHandler<T>>(
-    (event) => {
-      // console.log('click', event.detail);
-      event.persist();
+  return useRefCallback<React.MouseEventHandler<T>>((event) => {
+    // console.log('click', event.detail);
+    event.persist();
 
-      onClick && onClick(event);
+    onClick && onClick(event);
 
-      // Reset on single clicks
-      if (event.detail !== 2) {
-        debounceClickedRef.current = false;
-      }
+    // Reset on single clicks
+    if (event.detail !== 2) {
+      debounceClickedRef.current = false;
+    }
 
-      // start debounce
-      clickHandlerDebounced && clickHandlerDebounced(event);
+    // start debounce
+    clickHandlerDebounced && clickHandlerDebounced(event);
 
-      if (event.detail === 2) {
-        // Cancel if not yet debounced
-        if (!debounceClickedRef.current && clickHandlerDebounced) clickHandlerDebounced.cancel();
-        onDoubleClick(event);
-      }
-    },
-    [clickHandlerDebounced, onClick, onDoubleClick]
-  );
+    if (event.detail === 2) {
+      // Cancel if not yet debounced
+      if (!debounceClickedRef.current && clickHandlerDebounced) clickHandlerDebounced.cancel();
+      onDoubleClick(event);
+    }
+  });
 }
