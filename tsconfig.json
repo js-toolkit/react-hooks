@@ -11,5 +11,5 @@
     "typeRoots": ["./@types", "./node_modules/@types"],
     "diagnostics": true
   },
-  "include": ["./src/**/*", "./node_modules/@js-toolkit/ts-utils/types"]
+  "include": ["./src/**/*", "./node_modules/@js-toolkit/utils/types"]
 }
