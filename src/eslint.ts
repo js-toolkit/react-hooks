@@ -4,7 +4,7 @@ const config: import('eslint').Linter.Config = {
       'error',
       {
         additionalHooks:
-          '(useDoubleClick|useDoubleTap|useHideableState|useAsync|useObjectURL|useUpdateEffect|useUpdatedValue)',
+          '(useDoubleClick|useDoubleTap|useHideableState|useAsync|useObjectURL|useUpdateEffect|useUpdatedValue|useMemoDisposer)',
       },
     ],
   },
