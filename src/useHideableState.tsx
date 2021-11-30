@@ -7,6 +7,7 @@ export interface HideableState {
 }
 
 export type UseHideableStateResult = HideableState & {
+  readonly hidden: boolean;
   show: VoidFunction;
   hide: VoidFunction;
   disable: VoidFunction;
@@ -41,6 +42,9 @@ export default function useHideableState(
       },
       get visible() {
         return getState().visible;
+      },
+      get hidden() {
+        return !getState().visible;
       },
       show,
       hide,
