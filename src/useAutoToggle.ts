@@ -1,12 +1,15 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import debounce, { DebouncedFunc } from '@js-toolkit/utils/debounce';
-import useUpdateState from './useUpdateState';
+import useRefState from './useRefState';
+import useRefCallback from './useRefCallback';
 
 export interface ActivateOptions {
   /** Ignore disabled option. */
   force?: boolean;
   /** Disable auto toggle. */
   noWait?: boolean;
+  /** Force update react state. */
+  forceUpdateState?: boolean;
 }
 
 export interface Activate {
@@ -39,40 +42,35 @@ export default function useAutoToggle({
   disabled,
   wait = 3000,
 }: UseAutoToggleProps = {}): UseAutoToggleResult {
-  const [isActive, setActive] = useUpdateState(!!initialValue);
-  const disabledRef = useRef(disabled);
-  disabledRef.current = disabled;
+  const [isActive, setActive] = useRefState(!!initialValue);
 
   const deactivateDebounced = useMemo(() => {
     return debounce(() => isActive() && setActive(false), wait);
   }, [isActive, setActive, wait]);
 
-  const activate = useCallback(
-    (options: ActivateOptions | boolean = {}) => {
-      const { force, noWait } =
-        typeof options === 'boolean' ? { force: options, noWait: false } : options;
-      if (disabledRef.current && !force) {
-        return;
-      }
-      if (!isActive()) {
-        setActive(true);
-      }
-      // Do not debounce if disabled
-      if (wait <= 0 || noWait) {
-        deactivateDebounced.cancel();
-        return;
-      }
-      deactivateDebounced();
-    },
-    [deactivateDebounced, isActive, setActive, wait]
-  );
+  const activate = useRefCallback((options: ActivateOptions | boolean = {}) => {
+    const { force, noWait, forceUpdateState } =
+      typeof options === 'boolean' ? ({ force: options } as ActivateOptions) : options;
+    if (disabled && !force) {
+      return;
+    }
+    if (forceUpdateState || !isActive()) {
+      setActive(true);
+    }
+    // Do not debounce if disabled
+    if (wait <= 0 || noWait) {
+      deactivateDebounced.cancel();
+      return;
+    }
+    deactivateDebounced();
+  });
 
-  const deactivate = useCallback(() => {
+  const deactivate = useRefCallback(() => {
     deactivateDebounced.cancel();
     if (isActive()) {
       setActive(false);
     }
-  }, [deactivateDebounced, isActive, setActive]);
+  });
 
   useEffect(() => {
     if (initialValue && !disabled) {
