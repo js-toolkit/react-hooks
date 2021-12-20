@@ -19,7 +19,7 @@ export default function useUpdatedRefState<S>(
 
   // Update RefState during render
   useMemo(() => {
-    setState(state, { slient: true });
+    setState(state, { silent: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, updateStateDeps);
 

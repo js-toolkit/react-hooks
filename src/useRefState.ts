@@ -3,7 +3,7 @@ import useUpdate from './useUpdate';
 
 interface SetRefStateOptions {
   /** Do not re-render after state set. */
-  slient?: boolean;
+  silent?: boolean;
 }
 
 type UpdateState<S> = (
@@ -47,7 +47,7 @@ export default function useRefState<S>(
   const getState = useCallback(() => stateRef.current, []);
 
   const setState = useCallback(
-    (state: React.SetStateAction<S | undefined>, { slient }: SetRefStateOptions = {}) => {
+    (state: React.SetStateAction<S | undefined>, { silent: slient }: SetRefStateOptions = {}) => {
       stateRef.current =
         typeof state === 'function'
           ? (state as React.ReducerWithoutAction<S | undefined>)(stateRef.current)
@@ -58,7 +58,7 @@ export default function useRefState<S>(
   );
 
   const patchState = useCallback(
-    (patch: Partial<S | undefined>, { slient }: SetRefStateOptions = {}) => {
+    (patch: Partial<S | undefined>, { silent: slient }: SetRefStateOptions = {}) => {
       if (patch != null && typeof patch === 'object') {
         Object.assign(stateRef.current, patch);
       } else {
