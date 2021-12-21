@@ -1,5 +1,21 @@
 import React, { useEffect, useMemo } from 'react';
 
+/**
+ * It uses `useEffect` to destruct a value.
+ * Be careful: use destructor only for destruct prev created value.
+ */
+export default function useMemoDestructor<T>(
+  factory: () => [value: T, destructor: (value: T) => void],
+  deps: React.DependencyList | undefined
+): T {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const [value, destructor] = useMemo(factory, deps);
+
+  useEffect(() => () => destructor(value), [destructor, value]);
+
+  return value;
+}
+
 // export default function useMemoCleaner<T>(
 //   factory: () => [value: T, clean: (value: T, unmount: boolean) => void],
 //   deps: React.DependencyList | undefined
@@ -32,19 +48,3 @@ import React, { useEffect, useMemo } from 'react';
 
 //   return valueRef.current[0];
 // }
-
-/**
- * It uses `useEffect` to clean value.
- * Be careful: use cleaner only for clean prev created value.
- */
-export default function useMemoCleaner<T>(
-  factory: () => [value: T, cleaner: (value: T) => void],
-  deps: React.DependencyList | undefined
-): T {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const [value, cleaner] = useMemo(factory, deps);
-
-  useEffect(() => () => cleaner(value), [cleaner, value]);
-
-  return value;
-}
