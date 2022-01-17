@@ -8,8 +8,7 @@
     "declaration": true,
     "sourceMap": false,
     "incremental": true,
-    "typeRoots": ["./@types", "./node_modules/@types"],
     "diagnostics": true
   },
-  "include": ["./src/**/*", "./node_modules/@js-toolkit/utils/types"]
+  "include": ["./src/"]
 }
