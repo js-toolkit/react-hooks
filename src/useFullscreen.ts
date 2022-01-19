@@ -1,155 +1,69 @@
-// Inspired of: https://github.com/streamich/react-use/blob/master/src/useFullscreen.ts
-import { RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import fullscreen from '@js-toolkit/web-utils/fullscreen';
+import { RefObject, useEffect, useRef, useState } from 'react';
+import noop from '@js-toolkit/utils/noop';
+import FullscreenController, {
+  FullscreenRequestOptions,
+} from '@js-toolkit/web-utils/FullscreenController';
+import useUpdatedRef from './useUpdatedRef';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = (): void => {};
-
-export interface WebkitHTMLVideoElement extends HTMLVideoElement {
-  webkitEnterFullscreen?: () => void;
-  webkitExitFullscreen?: () => void;
-  webkitDisplayingFullscreen?: boolean;
-  // webkitSupportsFullscreen?: boolean;
-}
-
-export interface Options extends FullscreenOptions {
-  videoRef?: RefObject<WebkitHTMLVideoElement>;
-  toggleNativeVideoSubtitles?: boolean;
+export interface UseFullscreenOptions extends FullscreenRequestOptions {
+  videoRef?: RefObject<HTMLVideoElement>;
   /** Update state on next tick in order for wait until browser complete dom operations. */
   async?: boolean | number;
   onChange?: (isFullscreen: boolean, video: boolean) => void;
-  onError?: (error: Event) => void;
-}
-
-function toggleNativeSubtitles(enabled: boolean, textTracks: TextTrackList): void {
-  // console.log('toggleNativeSubtitles');
-  for (let i = 0; i < textTracks.length; i += 1) {
-    const track = textTracks[i];
-    if (enabled && track.mode === 'hidden') {
-      track.mode = 'showing';
-    } else if (!enabled && track.mode === 'showing') {
-      track.mode = 'hidden';
-    }
-    // console.log(track.label, track.mode);
-  }
-  // console.log('toggleNativeSubtitles end');
+  onError?: (error: unknown) => void;
 }
 
 export default function useFullscreen(
   ref: RefObject<Element>,
   on: boolean,
-  {
-    videoRef,
-    toggleNativeVideoSubtitles,
-    async,
-    onChange,
-    onError,
-    ...fullscreenOptions
-  }: Options = {}
+  { videoRef, async, onChange, onError, ...fullscreenOptions }: UseFullscreenOptions = {}
 ): boolean {
-  const [isFullscreen, setFullscreen] = useState(!!on);
-  const fullscreenOptionsRef = useRef(fullscreenOptions);
-  fullscreenOptionsRef.current = fullscreenOptions;
+  const [isFullscreenOn, setFullscreen] = useState(!!on);
+  const fullscreenOptionsRef = useUpdatedRef(fullscreenOptions);
+  const controllerRef = useRef<FullscreenController>();
 
   useEffect(() => {
-    if (!ref.current) {
-      return noop;
+    if (!ref.current) return noop;
+    if (!controllerRef.current) {
+      controllerRef.current = new FullscreenController(ref.current, videoRef?.current || undefined);
     }
+    const { current: controller } = controllerRef;
 
-    if (fullscreen.isEnabled) {
-      const update = (value: boolean): void => {
-        setFullscreen(value);
-        onChange && onChange(value, false);
-      };
+    const update = (value: boolean, video: boolean): void => {
+      setFullscreen(value);
+      onChange && onChange(value, video);
+    };
 
-      const changeHandler = (): void => {
-        const value = fullscreen.isFullscreen;
-        // console.log(value, document.fullscreenElement?.scrollHeight);
-        if (typeof async === 'number' || async === true) {
-          // Update state on next tick in order for wait until browser complete dom operations
-          setTimeout(() => update(value), typeof async === 'number' ? async : 0);
-        } else {
-          update(value);
-        }
-      };
+    controller.on(controller.Events.Change, ({ isFullscreen, video }) => {
+      // console.log(value, document.fullscreenElement?.scrollHeight);
+      if (typeof async === 'number' || async === true) {
+        // Update state on next tick in order for wait until browser complete dom operations
+        setTimeout(() => update(isFullscreen, video), typeof async === 'number' ? async : 0);
+      } else {
+        update(isFullscreen, video);
+      }
+    });
 
-      fullscreen.on('change', changeHandler);
-      onError && fullscreen.on('error', onError);
+    onError && controller.on(controller.Events.Error, ({ error }) => onError(error));
 
-      return () => {
-        fullscreen.off('change', changeHandler);
-        onError && fullscreen.off('error', onError);
-        // setFullscreen(false);
-        // void screenfull.exit();
-      };
-    }
-
-    const { current: video } = videoRef ?? {};
-    if (video?.webkitEnterFullscreen) {
-      const beginFullscreenHandler = (): void => {
-        setFullscreen(true);
-        onChange && onChange(true, true);
-      };
-
-      const endFullscreenHandler = (): void => {
-        setFullscreen(false);
-        onChange && onChange(false, true);
-      };
-
-      video.addEventListener('webkitbeginfullscreen', beginFullscreenHandler);
-      video.addEventListener('webkitendfullscreen', endFullscreenHandler);
-
-      return () => {
-        video.removeEventListener('webkitbeginfullscreen', beginFullscreenHandler);
-        video.removeEventListener('webkitendfullscreen', endFullscreenHandler);
-        // setFullscreen(false);
-        // video.webkitExitFullscreen();
-      };
-    }
-
-    return noop;
+    return () => {
+      controller.removeAllListeners();
+    };
   }, [async, onChange, onError, ref, videoRef]);
 
-  useLayoutEffect(() => {
-    if (!ref.current) {
-      return;
-    }
+  useEffect(() => {
+    const { current: controller } = controllerRef;
+    if (!controller) return;
 
-    if (fullscreen.isEnabled) {
-      if (fullscreen.isFullscreen === on) return;
-
-      if (on) {
-        void fullscreen.request(ref.current, fullscreenOptionsRef.current);
-      } else {
-        void fullscreen.exit();
-      }
-
-      return;
-    }
-
-    const { current: video } = videoRef ?? {};
-    if (video?.webkitEnterFullscreen && video.webkitExitFullscreen) {
-      if (toggleNativeVideoSubtitles && video.textTracks.length > 0) {
-        toggleNativeSubtitles(on, video.textTracks);
-      }
-
-      if (video.webkitDisplayingFullscreen === on) return;
-
-      if (on) {
-        video.webkitEnterFullscreen();
-      } else {
-        video.webkitExitFullscreen();
-      }
-
-      return;
-    }
-
-    // If 'on' but not worked
     if (on) {
-      setFullscreen(false);
-      onChange && onChange(false, false);
+      void controller.request(fullscreenOptionsRef.current).catch(() => {
+        setFullscreen(false);
+        onChange && onChange(false, false);
+      });
+    } else {
+      void controller.exit();
     }
-  }, [on, onChange, ref, toggleNativeVideoSubtitles, videoRef]);
+  }, [fullscreenOptionsRef, on, onChange]);
 
-  return isFullscreen;
+  return isFullscreenOn;
 }
