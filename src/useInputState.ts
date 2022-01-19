@@ -1,4 +1,4 @@
-import { SetStateAction, Dispatch } from 'react';
+import type { SetStateAction, Dispatch } from 'react';
 import useUpdateState, { StateGetter, UpdateState } from './useUpdateState';
 
 export const getInputChangeEventValue: StateGetter<

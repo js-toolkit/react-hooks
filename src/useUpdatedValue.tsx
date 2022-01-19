@@ -1,4 +1,3 @@
-import React from 'react';
 import useUpdatedRefValue from './useUpdatedRefValue';
 
 export default function useUpdatedValue<S>(

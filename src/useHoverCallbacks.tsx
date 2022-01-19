@@ -1,5 +1,3 @@
-import React from 'react';
-
 export type UseHoverCallbacksProps<T> = [
   onenter?: React.MouseEventHandler<T>,
   onleave?: React.MouseEventHandler<T>
