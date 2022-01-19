@@ -1,6 +1,7 @@
 import { RefObject, useEffect, useRef, useState } from 'react';
 import noop from '@js-toolkit/utils/noop';
 import FullscreenController, {
+  FullscreenControllerEvent,
   FullscreenRequestOptions,
 } from '@js-toolkit/web-utils/FullscreenController';
 import useUpdatedRef from './useUpdatedRef';
@@ -14,17 +15,22 @@ export interface UseFullscreenOptions extends FullscreenRequestOptions {
 }
 
 export default function useFullscreen(
-  ref: RefObject<Element>,
+  refOrController: RefObject<Element> | FullscreenController,
   on: boolean,
   { videoRef, async, onChange, onError, ...fullscreenOptions }: UseFullscreenOptions = {}
 ): boolean {
   const [isFullscreenOn, setFullscreen] = useState(!!on);
   const fullscreenOptionsRef = useUpdatedRef(fullscreenOptions);
-  const controllerRef = useRef<FullscreenController>();
+
+  const ref = 'current' in refOrController ? refOrController : undefined;
+  const controllerRef = useRef<FullscreenController | undefined>(
+    'current' in refOrController ? undefined : refOrController
+  );
 
   useEffect(() => {
-    if (!ref.current) return noop;
+    if (!ref && !controllerRef.current) return noop;
     if (!controllerRef.current) {
+      if (!ref?.current) return noop;
       controllerRef.current = new FullscreenController(ref.current, videoRef?.current || undefined);
     }
     const { current: controller } = controllerRef;
@@ -34,7 +40,10 @@ export default function useFullscreen(
       onChange && onChange(value, video);
     };
 
-    controller.on(controller.Events.Change, ({ isFullscreen, video }) => {
+    const changeHandler: FullscreenController.EventHandler<FullscreenControllerEvent.Change> = ({
+      isFullscreen,
+      video,
+    }) => {
       // console.log(value, document.fullscreenElement?.scrollHeight);
       if (typeof async === 'number' || async === true) {
         // Update state on next tick in order for wait until browser complete dom operations
@@ -42,12 +51,23 @@ export default function useFullscreen(
       } else {
         update(isFullscreen, video);
       }
-    });
+    };
 
-    onError && controller.on(controller.Events.Error, ({ error }) => onError(error));
+    const errorHandler: FullscreenController.EventHandler<FullscreenControllerEvent.Error> = ({
+      error,
+    }) => {
+      onError && onError(error);
+    };
+
+    controller.on(controller.Events.Change, changeHandler);
+    onError && controller.on(controller.Events.Error, errorHandler);
 
     return () => {
-      controller.removeAllListeners();
+      controller.off(controller.Events.Change, changeHandler);
+      controller.off(controller.Events.Error, errorHandler);
+      if (!ref) {
+        void controller.destroy();
+      }
     };
   }, [async, onChange, onError, ref, videoRef]);
 
