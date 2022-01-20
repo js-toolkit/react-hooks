@@ -47,9 +47,9 @@ export default function useFullscreen(
       // console.log(value, document.fullscreenElement?.scrollHeight);
       if (typeof async === 'number' || async === true) {
         // Update state on next tick in order for wait until browser complete dom operations
-        setTimeout(() => update(isFullscreen, video), typeof async === 'number' ? async : 0);
+        setTimeout(() => update(isFullscreen, !!video), typeof async === 'number' ? async : 0);
       } else {
-        update(isFullscreen, video);
+        update(isFullscreen, !!video);
       }
     };
 
