@@ -1,4 +1,5 @@
 import React, { useCallback, useRef } from 'react';
+import useFirstMount from './useFirstMount';
 import useUpdate from './useUpdate';
 
 interface SetRefStateOptions {
@@ -48,11 +49,14 @@ export default function useRefState<S>(
   patch: UpdateState<S | undefined>
 ] {
   const update = useUpdate();
+  const firstMount = useFirstMount();
+  const stateRef = useRef<S | undefined>();
 
-  const stateRef = useRef<S | undefined>(
-    (typeof initialState === 'object' && initialState !== null && { ...initialState }) ||
-      (typeof initialState === 'function' ? (initialState as () => S)() : initialState)
-  );
+  if (firstMount) {
+    stateRef.current =
+      (typeof initialState === 'object' && initialState !== null && { ...initialState }) ||
+      (typeof initialState === 'function' ? (initialState as () => S)() : initialState);
+  }
 
   const getState = useCallback(() => stateRef.current, []);
 
