@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import useUpdateState from './useUpdateState';
+import useRefState from './useRefState';
 
 export type PendingTasks<TaskKeys extends string> = { default: number } & {
   [P in TaskKeys]?: number;
@@ -17,7 +17,7 @@ export interface UsePendingResult<TaskKeys extends string> {
 export default function usePendingTasks<
   TaskKeys extends string = never
 >(): UsePendingResult<TaskKeys> {
-  const [getPendingTasks, setPendingTasks] = useUpdateState<PendingTasks<TaskKeys>>({
+  const [getPendingTasks, setPendingTasks] = useRefState<PendingTasks<TaskKeys>>({
     default: 0,
   });
 
@@ -47,8 +47,8 @@ export default function usePendingTasks<
   const pop = useCallback(
     (key: keyof PendingTasks<TaskKeys> = 'default') => {
       // console.log('pop', key);
-      const value = getPendingTasks()[key] as number | undefined;
-      if (value == null || value === 0) return;
+      const value = getPendingTasks()[key] ?? 0;
+      if (value === 0) return;
       setPendingTasks((prev) => ({ ...prev, [key]: value - 1 }));
     },
     [getPendingTasks, setPendingTasks]

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import useIsMounted from './useIsMounted';
-import useUpdateState from './useUpdateState';
+import useRefState from './useRefState';
 
 type AsyncState<T> =
   | {
@@ -56,7 +56,7 @@ export default function useAsync<F extends AnyAsyncFunction>(
     deps
   );
 
-  const [getState, setState] = useUpdateState<StateByAsyncFn<F>>(
+  const [getState, setState] = useRefState<StateByAsyncFn<F>>(
     () =>
       ({
         loading: !!(initialState.loading ?? false),

@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import useIsFirstMount from './useIsFirstMount';
-import useUpdateState from './useUpdateState';
+import useRefState from './useRefState';
 
 export default function useUpdatedState<S = undefined>(
   state?: undefined,
@@ -16,7 +16,7 @@ export default function useUpdatedState<S>(
   state?: S | ((prevState?: S) => S),
   updateStateDeps: React.DependencyList = []
 ): [getState: () => S | undefined, setState: React.Dispatch<React.SetStateAction<S | undefined>>] {
-  const [getState, setState] = useUpdateState(state);
+  const [getState, setState] = useRefState(state);
   const isFirstMount = useIsFirstMount();
 
   useLayoutEffect(() => {
