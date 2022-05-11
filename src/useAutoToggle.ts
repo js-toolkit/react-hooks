@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import debounce, { DebouncedFunc } from '@js-toolkit/utils/debounce';
+import debounce, { DebouncedFunc } from '@jstoolkit/utils/debounce';
 import useRefState from './useRefState';
 import useRefCallback from './useRefCallback';
 

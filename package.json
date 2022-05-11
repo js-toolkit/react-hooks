@@ -1,5 +1,5 @@
 {
-  "name": "@js-toolkit/react-hooks",
+  "name": "@jstoolkit/react-hooks",
   "version": "1.43.1",
   "description": "React hooks",
   "author": "VZH",
@@ -10,49 +10,48 @@
     "type": "git",
     "url": "https://github.com/js-toolkit/react-hooks"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "scripts": {
     "clean": "rimraf dist/*",
     "copy:configs": "copyfiles package.json .npmignore README.md LICENSE ./dist/",
     "minify": "node-utils-minify --replace ./dist",
     "build": "npm run clean && tsc --build ./tsconfig.json && npm run minify",
-    "build-to-styled-components": "tsc --project ./tsconfig.json --outDir '../styled-components/node_modules/@js-toolkit/react-hooks/'",
-    "build-to-tutoron": "tsc --project ./tsconfig.json --outDir '../../../tutoron/node_modules/@js-toolkit/react-hooks'",
+    "build-to-styled-components": "tsc --project ./tsconfig.json --outDir '../styled-components/node_modules/@jstoolkit/react-hooks/'",
+    "build-to-tutoron": "tsc --project ./tsconfig.json --outDir '../../../tutoron/node_modules/@jstoolkit/react-hooks'",
     "build-to-player": "tsc --build ./tsconfig.json && npm run minify && copyfiles -e './dist/*(package.json|README.md|LICENSE)' -u 1 './dist/**/*' '../../../player/modules/react-hooks'",
-    "patch-publish": "npm run build && npm version patch && npm run copy:configs && npm publish ./dist/ && git push origin master --follow-tags",
-    "minor-publish": "npm run build && npm version minor && npm run copy:configs && npm publish ./dist/ && git push origin master --follow-tags"
+    "patch-publish": "npm run build && npm version patch && npm run copy:configs && npm publish ./dist/ --access public && git push origin master --follow-tags",
+    "minor-publish": "npm run build && npm version minor && npm run copy:configs && npm publish ./dist/ --access public && git push origin master --follow-tags"
+  },
+  "optionalDependencies": {
+    "@js-toolkit/node-utils": "^1.1.4"
   },
   "devDependencies": {
-    "@js-toolkit/configs": "^3.84.2",
-    "@js-toolkit/node-utils": "^1.1.4",
-    "@js-toolkit/utils": "^1.42.0",
-    "@js-toolkit/web-utils": "^1.32.2",
-    "@types/eslint": "^8.4.1",
-    "@types/lodash.debounce": "^4.0.6",
-    "@types/node": "^17.0.23",
-    "@types/react": "17.0.43",
-    "@typescript-eslint/eslint-plugin": "^5.16.0",
-    "@typescript-eslint/parser": "^5.16.0",
+    "@jstoolkit/configs": "^3.84.6",
+    "@jstoolkit/utils": "^1.43.1",
+    "@jstoolkit/web-utils": "^1.32.4",
+    "@types/eslint": "^8.4.2",
+    "@types/lodash.debounce": "^4.0.7",
+    "@types/node": "^17.0.32",
+    "@types/react": "18.0.9",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
     "copyfiles": "^2.4.1",
-    "eslint": "^8.12.0",
+    "eslint": "^8.15.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.4",
-    "eslint-plugin-react-hooks": "^4.3.0",
+    "eslint-plugin-react-hooks": "^4.5.0",
     "eventemitter3": "^4.0.7",
     "lodash.debounce": "^4.0.8",
-    "prettier": "^2.6.1",
-    "react": "^17.0.2",
-    "recoil": "^0.6.1",
+    "prettier": "^2.6.2",
+    "react": "^18.1.0",
+    "recoil": "^0.7.3-alpha.2",
     "rimraf": "^3.0.2",
-    "terser": "^5.12.1",
-    "typescript": "^4.6.3",
-    "yargs": "^17.4.0"
+    "terser": "^5.13.1",
+    "typescript": "^4.6.4",
+    "yargs": "^17.4.1"
   },
   "peerDependencies": {
     "react": ">= 16.8"

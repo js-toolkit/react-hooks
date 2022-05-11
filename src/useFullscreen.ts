@@ -1,9 +1,9 @@
 import { RefObject, useEffect, useRef, useState } from 'react';
-import noop from '@js-toolkit/utils/noop';
+import noop from '@jstoolkit/utils/noop';
 import FullscreenController, {
   FullscreenControllerEvent,
   FullscreenRequestOptions,
-} from '@js-toolkit/web-utils/FullscreenController';
+} from '@jstoolkit/web-utils/FullscreenController';
 import useUpdatedRef from './useUpdatedRef';
 
 export interface UseFullscreenOptions extends FullscreenRequestOptions {
