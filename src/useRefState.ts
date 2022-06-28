@@ -74,7 +74,7 @@ export default function useRefState<S>(
   const patchState = useCallback(
     (patch: Partial<S | undefined>, { silent }: SetRefStateOptions = {}) => {
       if (patch != null && typeof patch === 'object') {
-        Object.assign(stateRef.current, patch);
+        Object.assign(stateRef.current as AnyObject, patch);
       } else {
         stateRef.current = patch;
       }
