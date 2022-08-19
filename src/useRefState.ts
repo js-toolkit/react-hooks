@@ -2,12 +2,12 @@ import React, { useCallback, useRef } from 'react';
 import useFirstMount from './useFirstMount';
 import useUpdate from './useUpdate';
 
-interface SetRefStateOptions {
+export interface SetRefStateOptions {
   /** Do not re-render after state set. */
   silent?: boolean;
 }
 
-type UpdateState<S> = (
+export type UpdateState<S> = (
   patch: IfExtends<
     S,
     ReadonlyArray<unknown> | AnyFunction,
