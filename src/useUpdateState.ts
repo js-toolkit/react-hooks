@@ -6,7 +6,7 @@ export type StateGetter<E, S> = (wrappedOrValue: E) => S;
 
 export type UpdateState<E> = (wrappedOrValue: E) => void;
 
-export function getValue<S>(wrappedOrValue: { value: S } | S): S {
+export function getValue<S extends NonNullValue>(wrappedOrValue: { value: S } | S): S {
   if (typeof wrappedOrValue === 'object' && 'value' in wrappedOrValue) return wrappedOrValue.value;
   // Do not throw an error because `S` may be an `object` type or any simple type.
   return wrappedOrValue;
