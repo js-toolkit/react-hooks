@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
 export default function useUpdatedRefValue<S>(
   value: S | ((prevValue?: S) => S),

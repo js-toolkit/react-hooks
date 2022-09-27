@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 
 interface ExtendFactory<S, T> {
   (state: { get: () => S; set: React.Dispatch<React.SetStateAction<S>> }): T;

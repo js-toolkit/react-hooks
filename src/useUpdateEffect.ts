@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import useFirstMount from './useFirstMount';
 
 export default function useUpdateEffect(

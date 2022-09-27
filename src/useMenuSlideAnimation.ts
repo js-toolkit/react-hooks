@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 import getInnerYDimensions from '@jstoolkit/web-utils/getInnerYDimensions';
 import useUpdatedRefState from './useUpdatedRefState';
 

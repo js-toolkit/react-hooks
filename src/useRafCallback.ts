@@ -1,8 +1,8 @@
-import { DependencyList, useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 export default function useRafCallback<T extends AnyFunction>(
   callback: T,
-  deps: DependencyList
+  deps: React.DependencyList
 ): T {
   const frameRef = useRef(0);
 
