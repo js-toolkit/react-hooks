@@ -3,7 +3,7 @@ import debounce from 'lodash.debounce';
 import useRefCallback from './useRefCallback';
 
 export interface UseDoubleClickProps<T = Element> {
-  onClick?: React.MouseEventHandler<T>;
+  onClick?: (...params: Parameters<React.MouseEventHandler<T>>) => false | void;
   debounceClick?: {
     handler: React.MouseEventHandler<T>;
     wait: number;
@@ -25,7 +25,7 @@ export default function useDoubleClick<T = Element>(
 
   const clickHandlerDebounced = useMemo(() => {
     return onDebounceClick
-      ? debounce<React.MouseEventHandler<any>>((event) => {
+      ? debounce<React.MouseEventHandler<T>>((event) => {
           debounceClickedRef.current = true;
           onDebounceClick(event);
         }, debounceWait)
@@ -43,7 +43,8 @@ export default function useDoubleClick<T = Element>(
     // console.log('click', event.detail);
     event.persist();
 
-    onClick && onClick(event);
+    const res = onClick && onClick(event);
+    if (res === false) return;
 
     // Reset on single clicks
     if (event.detail !== 2) {
