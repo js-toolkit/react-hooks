@@ -77,6 +77,7 @@ export default function useMenuSlideAnimation<S>(
 
   const onContentEntered = useCallback((node0: HTMLElement) => {
     const node = node0;
+    // In order to shrink or fill the parent (show scrollbar etc)
     node.style.height = '100%';
   }, []);
 
