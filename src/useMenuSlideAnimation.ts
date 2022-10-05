@@ -35,7 +35,8 @@ export default function useMenuSlideAnimation<S>(
   }: UseMenuSlideAnimationProps<S>,
   deps: React.DependencyList = []
 ): UseMenuSlideAnimationResult<S> {
-  const [getState, setState] = useUpdatedRefState(() => nextState, deps); // eslint-disable-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const [getState, setState] = useUpdatedRefState(() => nextState, deps);
 
   const currentState = getState();
 
