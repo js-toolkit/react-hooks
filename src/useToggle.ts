@@ -1,15 +1,20 @@
-import { Reducer, useCallback, useReducer } from 'react';
-
-const toggleReducer = (state: boolean, nextValue?: unknown): boolean =>
-  typeof nextValue === 'boolean' ? nextValue : !state;
+import useRefCallback from './useRefCallback';
+import useRefState from './useRefState';
 
 export default function useToggle(
   initialValue = false
 ): [value: boolean, toggle: (value?: unknown) => void, on: VoidFunction, off: VoidFunction] {
-  const [value, dispatch] = useReducer<Reducer<boolean, unknown>>(toggleReducer, initialValue);
+  const [get, set] = useRefState(initialValue);
 
-  const on = useCallback(() => dispatch(true), []);
-  const off = useCallback(() => dispatch(false), []);
+  const on = useRefCallback(() => set(true));
 
-  return [value, dispatch, on, off];
+  const off = useRefCallback(() => set(false));
+
+  const toggle = useRefCallback((v?: unknown) => {
+    const nextValue = v == null ? !get() : v;
+    if (nextValue) on();
+    else off();
+  });
+
+  return [get(), toggle, on, off];
 }
