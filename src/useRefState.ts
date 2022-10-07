@@ -62,23 +62,26 @@ export default function useRefState<S>(
 
   const setState = useCallback(
     (state: React.SetStateAction<S | undefined>, { silent }: SetRefStateOptions = {}) => {
-      stateRef.current =
+      const nextState =
         typeof state === 'function'
           ? (state as React.ReducerWithoutAction<S | undefined>)(stateRef.current)
           : state;
-      !silent && update();
+      const shouldUpdate = stateRef.current !== nextState;
+      stateRef.current = nextState;
+      shouldUpdate && !silent && update();
     },
     [update]
   );
 
   const patchState = useCallback(
     (patch: Partial<S | undefined>, { silent }: SetRefStateOptions = {}) => {
+      const shouldUpdate = stateRef.current !== patch;
       if (patch != null && typeof patch === 'object') {
         Object.assign(stateRef.current as AnyObject, patch);
       } else {
         stateRef.current = patch;
       }
-      !silent && update();
+      shouldUpdate && !silent && update();
     },
     [update]
   );
