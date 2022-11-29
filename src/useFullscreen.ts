@@ -1,12 +1,9 @@
 import { RefObject, useEffect, useRef, useState } from 'react';
 import noop from '@jstoolkit/utils/noop';
-import FullscreenController, {
-  FullscreenControllerEvent,
-  FullscreenRequestOptions,
-} from '@jstoolkit/web-utils/FullscreenController';
+import { FullscreenController } from '@jstoolkit/web-utils/FullscreenController';
 import useUpdatedRef from './useUpdatedRef';
 
-export interface UseFullscreenOptions extends FullscreenRequestOptions {
+export interface UseFullscreenOptions extends FullscreenController.RequestOptions {
   videoRef?: RefObject<HTMLVideoElement>;
   /** Update state on next tick in order for wait until browser complete dom operations. */
   async?: boolean | number;
@@ -40,7 +37,7 @@ export default function useFullscreen(
       onChange && onChange(value, video);
     };
 
-    const changeHandler: FullscreenController.EventHandler<FullscreenControllerEvent.Change> = ({
+    const changeHandler: FullscreenController.EventHandler<FullscreenController.Events.Change> = ({
       isFullscreen,
       video,
     }) => {
@@ -53,7 +50,7 @@ export default function useFullscreen(
       }
     };
 
-    const errorHandler: FullscreenController.EventHandler<FullscreenControllerEvent.Error> = ({
+    const errorHandler: FullscreenController.EventHandler<FullscreenController.Events.Error> = ({
       error,
     }) => {
       onError && onError(error);
