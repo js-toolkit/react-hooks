@@ -16,37 +16,35 @@ function angleToOrientationType(angle: number): OrientationType | undefined {
   return undefined;
 }
 
+export function getScreenSize({ respectOrientation = true }: UseScreenSizeProps = {}): ScreenSize {
+  const { width, height, orientation } = window.screen;
+
+  if (respectOrientation) {
+    const orientationType = orientation
+      ? orientation.type
+      : angleToOrientationType(window.orientation);
+    if (
+      (orientationType === 'landscape-primary' || orientationType === 'landscape-secondary') &&
+      width < height
+    ) {
+      return { width: height, height: width };
+    }
+  }
+
+  return { width, height };
+}
+
 export default function useScreenSize({
   respectOrientation = true,
 }: UseScreenSizeProps = {}): ScreenSize {
-  const [getSize, setSize] = useRefState<ScreenSize>(() => ({
-    width: window.screen.width,
-    height: window.screen.height,
-  }));
+  const [getSize, setSize] = useRefState<ScreenSize>(getScreenSize);
 
   useEffect(() => {
-    const updateSize = (width: number, height: number): void => {
-      const prevSize = getSize();
-      if (prevSize.width === width && prevSize.height === height) return;
-      setSize({ width, height });
-    };
-
     const changeHandler = rafCallback(() => {
-      const { width, height, orientation } = window.screen;
-
-      if (!respectOrientation) {
-        updateSize(width, height);
-        return;
-      }
-
-      const orientationType = orientation
-        ? orientation.type
-        : angleToOrientationType(window.orientation);
-      if (
-        (orientationType === 'landscape-primary' || orientationType === 'landscape-secondary') &&
-        width < height
-      ) {
-        updateSize(height, width);
+      const nextSize = getScreenSize({ respectOrientation });
+      const prevSize = getSize();
+      if (prevSize.width !== nextSize.width || prevSize.height !== nextSize.height) {
+        setSize(nextSize);
       }
     });
 
