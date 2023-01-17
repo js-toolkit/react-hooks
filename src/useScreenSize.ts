@@ -39,7 +39,9 @@ export default function useScreenSize({
         return;
       }
 
-      const orientationType = orientation ? orientation.type : angleToOrientationType(orientation);
+      const orientationType = orientation
+        ? orientation.type
+        : angleToOrientationType(window.orientation);
       if (
         (orientationType === 'landscape-primary' || orientationType === 'landscape-secondary') &&
         width < height
