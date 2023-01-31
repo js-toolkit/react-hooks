@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import debounce from 'lodash.debounce';
+import debounce from '@jstoolkit/utils/debounce';
 import useRefCallback from './useRefCallback';
 
 export interface UseDoubleClickProps<T = Element> {
@@ -15,8 +15,6 @@ export default function useDoubleClick<T = Element>(
   factory: () => UseDoubleClickProps<T>,
   deps: React.DependencyList = []
 ): React.MouseEventHandler<T> {
-  const debounceClickedRef = useRef(false);
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const { onClick, onDoubleClick, debounceClick } = useMemo(factory, deps);
 
@@ -25,16 +23,15 @@ export default function useDoubleClick<T = Element>(
 
   const clickHandlerDebounced = useMemo(() => {
     return onDebounceClick
-      ? debounce<React.MouseEventHandler<T>>((event) => {
-          debounceClickedRef.current = true;
-          onDebounceClick(event);
-        }, debounceWait)
+      ? debounce<React.MouseEventHandler<T>>(onDebounceClick, debounceWait)
       : undefined;
   }, [debounceWait, onDebounceClick]);
 
+  const lastTimeRef = useRef(0);
+
   useEffect(
     () => () => {
-      clickHandlerDebounced && clickHandlerDebounced.cancel();
+      clickHandlerDebounced?.cancel();
     },
     [clickHandlerDebounced]
   );
@@ -46,18 +43,23 @@ export default function useDoubleClick<T = Element>(
     const res = onClick && onClick(event);
     if (res === false) return;
 
-    // Reset on single clicks
-    if (event.detail !== 2) {
-      debounceClickedRef.current = false;
-    }
-
-    // start debounce
+    // Start debounce
     clickHandlerDebounced && clickHandlerDebounced(event);
 
-    if (event.detail === 2) {
-      // Cancel if not yet debounced
-      if (!debounceClickedRef.current && clickHandlerDebounced) clickHandlerDebounced.cancel();
+    const currentTime = event.timeStamp;
+    const delay = currentTime - lastTimeRef.current;
+
+    if (
+      (event.detail > 0 && event.detail % 2 === 0) ||
+      // On old ios versions `event.detail` always equals `1`, so checking delay manually
+      (event.detail === 1 && delay > 0 && delay <= 300)
+    ) {
+      lastTimeRef.current = 0;
+      // Cancel if double click
+      clickHandlerDebounced?.cancel();
       onDoubleClick(event);
+    } else {
+      lastTimeRef.current = currentTime;
     }
   });
 }
