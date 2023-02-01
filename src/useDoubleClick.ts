@@ -2,24 +2,25 @@ import { useEffect, useMemo, useRef } from 'react';
 import debounce from '@jstoolkit/utils/debounce';
 import useRefCallback from './useRefCallback';
 
-export interface UseDoubleClickProps<T = Element> {
-  onClick?: (...params: Parameters<React.MouseEventHandler<T>>) => boolean | void;
-  // click?: {
-  //   handler: (...params: Parameters<React.MouseEventHandler<T>>) => boolean | void;
-  //   /** Default `true` */
-  //   ignoreOnDoubleClick?: boolean;
-  // };
+type BaseEvent = PartialSome<Pick<React.TouchEvent, 'timeStamp' | 'detail' | 'persist'>, 'persist'>;
+type BaseHandler<E> = (event: E) => any;
+
+export interface UseDoubleClickProps<
+  E extends BaseEvent,
+  H extends BaseHandler<E> = BaseHandler<E>
+> {
+  onClick?: (...params: Parameters<H>) => boolean | void;
   debounceClick?: {
-    handler: React.MouseEventHandler<T>;
+    handler: H;
     wait: number;
   };
-  onDoubleClick: React.MouseEventHandler<T>;
+  onDoubleClick: H;
 }
 
-export default function useDoubleClick<T = Element>(
-  factory: () => UseDoubleClickProps<T>,
-  deps: React.DependencyList = []
-): React.MouseEventHandler<T> {
+export default function useDoubleClick<
+  E extends BaseEvent,
+  H extends BaseHandler<E> = BaseHandler<E>
+>(factory: () => UseDoubleClickProps<E, H>, deps: React.DependencyList = []): H {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const { onClick, debounceClick, onDoubleClick } = useMemo(factory, deps);
 
@@ -27,9 +28,7 @@ export default function useDoubleClick<T = Element>(
   const debounceWait = debounceClick?.wait;
 
   const clickHandlerDebounced = useMemo(() => {
-    return onDebounceClick
-      ? debounce<React.MouseEventHandler<T>>(onDebounceClick, debounceWait)
-      : undefined;
+    return onDebounceClick ? debounce<H>(onDebounceClick, debounceWait) : undefined;
   }, [debounceWait, onDebounceClick]);
 
   const lastTimeRef = useRef(0);
@@ -41,7 +40,8 @@ export default function useDoubleClick<T = Element>(
     [clickHandlerDebounced]
   );
 
-  return useRefCallback<React.MouseEventHandler<T>>((event) => {
+  return useRefCallback((...params: Parameters<H>) => {
+    const event = params[0];
     // console.log('click', event.detail);
 
     const currentTime = event.timeStamp;
@@ -59,7 +59,7 @@ export default function useDoubleClick<T = Element>(
       return;
     }
 
-    const res = onClick && onClick(event);
+    const res = onClick && onClick(...params);
     if (res === false) {
       lastTimeRef.current = 0;
       return;
@@ -67,10 +67,10 @@ export default function useDoubleClick<T = Element>(
 
     // Start debounce
     if (clickHandlerDebounced) {
-      event.persist();
-      clickHandlerDebounced(event);
+      event.persist && event.persist();
+      clickHandlerDebounced(...params);
     }
 
     lastTimeRef.current = currentTime;
-  });
+  }) as H;
 }
