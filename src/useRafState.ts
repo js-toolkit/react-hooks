@@ -1,5 +1,5 @@
 import useRafCallback from './useRafCallback';
-import useRefState, { SetRefStateOptions, UpdateState } from './useRefState';
+import useRefState, { type SetRefStateOptions, type UpdateState } from './useRefState';
 
 export default function useRafState<S = undefined>(): [
   getState: () => S | undefined,
