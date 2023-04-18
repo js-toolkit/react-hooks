@@ -1,38 +1,15 @@
 import { useEffect } from 'react';
 import { rafCallback } from '@jstoolkit/web-utils/rafCallback';
+import {
+  getScreenSize,
+  type GetScreenSizeProps,
+  type ScreenSize,
+} from '@jstoolkit/web-utils/getScreenSize';
 import useRefState from './useRefState';
 
-export type ScreenSize = Pick<Screen, 'width' | 'height'>;
+export type { ScreenSize };
 
-export interface UseScreenSizeProps {
-  readonly respectOrientation?: boolean;
-}
-
-function angleToOrientationType(angle: number): OrientationType | undefined {
-  if (angle === 0) return 'portrait-primary';
-  if (angle === 180) return 'portrait-secondary';
-  if (angle === 90) return 'landscape-primary';
-  if (angle === -90) return 'landscape-secondary';
-  return undefined;
-}
-
-export function getScreenSize({ respectOrientation = true }: UseScreenSizeProps = {}): ScreenSize {
-  const { width, height, orientation } = window.screen;
-
-  if (respectOrientation) {
-    const orientationType = orientation
-      ? orientation.type
-      : angleToOrientationType(window.orientation);
-    if (
-      (orientationType === 'landscape-primary' || orientationType === 'landscape-secondary') &&
-      width < height
-    ) {
-      return { width: height, height: width };
-    }
-  }
-
-  return { width, height };
-}
+export type UseScreenSizeProps = GetScreenSizeProps;
 
 export default function useScreenSize({
   respectOrientation = true,

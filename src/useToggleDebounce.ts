@@ -8,7 +8,7 @@ export type UseToggleDebounceResult<D> = [
   getData: () => D,
   setActive: (isActive: boolean, data?: D) => void,
   updateData: (data: D) => void,
-  cancel: () => void
+  cancel: VoidFunction
 ];
 
 export type UseToggleDebounceProps<D> = {

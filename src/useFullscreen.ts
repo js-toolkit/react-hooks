@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { type RefObject, useEffect, useRef, useState } from 'react';
 import noop from '@jstoolkit/utils/noop';
 import { FullscreenController } from '@jstoolkit/web-utils/FullscreenController';
 import useUpdatedRef from './useUpdatedRef';

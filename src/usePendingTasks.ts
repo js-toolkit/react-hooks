@@ -11,7 +11,7 @@ export interface UsePendingResult<TaskKeys extends string> {
   push: (key?: keyof PendingTasks<TaskKeys>) => void;
   pop: (key?: keyof PendingTasks<TaskKeys>) => void;
   reset: (key?: keyof PendingTasks<TaskKeys>) => void;
-  resetAll: () => void;
+  resetAll: VoidFunction;
 }
 
 export default function usePendingTasks<
