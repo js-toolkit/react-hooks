@@ -54,6 +54,7 @@ export default function useRefState<S>(
 
   if (firstMount) {
     stateRef.current =
+      (typeof initialState === 'object' && Array.isArray(initialState) && initialState) ||
       (typeof initialState === 'object' && initialState !== null && { ...initialState }) ||
       (typeof initialState === 'function' ? (initialState as () => S)() : initialState);
   }
@@ -76,7 +77,9 @@ export default function useRefState<S>(
   const patchState = useCallback(
     (patch: Partial<S | undefined>, { silent }: SetRefStateOptions = {}) => {
       const shouldUpdate = stateRef.current !== patch;
-      if (patch != null && typeof patch === 'object') {
+      if (patch != null && Array.isArray(patch)) {
+        stateRef.current = patch as S;
+      } else if (patch != null && typeof patch === 'object') {
         Object.assign(stateRef.current as AnyObject, patch);
       } else {
         stateRef.current = patch;
