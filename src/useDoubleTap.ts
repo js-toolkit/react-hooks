@@ -5,7 +5,7 @@ type BaseHandler<E> = (event: E) => any;
 
 export default function useDoubleTap<
   E extends BaseEvent,
-  H extends BaseHandler<E> = BaseHandler<E>
+  H extends BaseHandler<E> = BaseHandler<E>,
 >(
   factory: () => {
     handler: H;

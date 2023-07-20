@@ -18,7 +18,7 @@ export default function useInputState(
 ): [
   () => string,
   UpdateState<React.ChangeEvent<HTMLInputElement> | { value: string } | string>,
-  Dispatch<SetStateAction<string>>
+  Dispatch<SetStateAction<string>>,
 ] {
   const [get, set, update] = useUpdateState(initialState, getInputChangeEventValue);
   return [get, update, set];

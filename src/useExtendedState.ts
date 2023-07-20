@@ -8,7 +8,7 @@ export default function useExtendedState<S, E>(
   stateMethods: [
     getState: () => S,
     setState: React.Dispatch<React.SetStateAction<S>>,
-    ...rest: unknown[]
+    ...rest: unknown[],
   ],
   extend: ExtendFactory<S, E>
 ): [E, ...typeof stateMethods] {

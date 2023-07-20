@@ -15,7 +15,7 @@ export interface UsePendingResult<TaskKeys extends string> {
 }
 
 export default function usePendingTasks<
-  TaskKeys extends string = never
+  TaskKeys extends string = never,
 >(): UsePendingResult<TaskKeys> {
   const [getPendingTasks, setPendingTasks] = useRefState<PendingTasks<TaskKeys>>({
     default: 0,

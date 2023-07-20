@@ -35,7 +35,7 @@ export type UseAsyncProps<F extends AnyAsyncFunction> = Partial<StateByAsyncFn<F
 type UseAsyncResult<F extends AnyAsyncFunction> = [
   state: StateByAsyncFn<F>,
   call: (...args: Parameters<F>) => ReturnType<F>,
-  getState: () => StateByAsyncFn<F>
+  getState: () => StateByAsyncFn<F>,
 ];
 
 export default function useAsync<F extends AnyAsyncFunction>(
@@ -62,7 +62,7 @@ export default function useAsync<F extends AnyAsyncFunction>(
         loading: !!(initialState.loading ?? false),
         error: initialState.error,
         value: initialState.value,
-      } as StateByAsyncFn<F>)
+      }) as StateByAsyncFn<F>
   );
 
   const call = useCallback(

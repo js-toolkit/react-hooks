@@ -7,7 +7,7 @@ type BaseHandler<E> = (event: E) => any;
 
 export interface UseDoubleClickProps<
   E extends BaseEvent,
-  H extends BaseHandler<E> = BaseHandler<E>
+  H extends BaseHandler<E> = BaseHandler<E>,
 > {
   onClick?: (...params: Parameters<H>) => boolean | void;
   debounceClick?: {
@@ -19,7 +19,7 @@ export interface UseDoubleClickProps<
 
 export default function useDoubleClick<
   E extends BaseEvent,
-  H extends BaseHandler<E> = BaseHandler<E>
+  H extends BaseHandler<E> = BaseHandler<E>,
 >(factory: () => UseDoubleClickProps<E, H>, deps: React.DependencyList = []): H {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const { onClick, debounceClick, onDoubleClick } = useMemo(factory, deps);

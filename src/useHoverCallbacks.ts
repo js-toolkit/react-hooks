@@ -1,6 +1,6 @@
 export type UseHoverCallbacksProps<T> = [
   onenter?: React.MouseEventHandler<T>,
-  onleave?: React.MouseEventHandler<T>
+  onleave?: React.MouseEventHandler<T>,
 ];
 
 export type UseHoverCallbacksResult<T> = Pick<

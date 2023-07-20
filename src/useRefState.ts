@@ -20,7 +20,7 @@ export type UpdateState<S> = (
 export default function useRefState<S = undefined>(): [
   getState: () => S | undefined,
   setState: (nextState: React.SetStateAction<S | undefined>, options?: SetRefStateOptions) => void,
-  patch: UpdateState<S | undefined>
+  patch: UpdateState<S | undefined>,
 ];
 
 export default function useRefState<S>(
@@ -28,7 +28,7 @@ export default function useRefState<S>(
 ): [
   getState: () => S,
   setState: (nextState: React.SetStateAction<S>, options?: SetRefStateOptions) => void,
-  patch: UpdateState<S>
+  patch: UpdateState<S>,
 ];
 
 // export default function useRefState<S>(
@@ -46,7 +46,7 @@ export default function useRefState<S>(
 ): [
   getState: () => S | undefined,
   setState: (nextState: React.SetStateAction<S | undefined>, options?: SetRefStateOptions) => void,
-  patch: UpdateState<S | undefined>
+  patch: UpdateState<S | undefined>,
 ] {
   const update = useUpdate();
   const firstMount = useFirstMount();
