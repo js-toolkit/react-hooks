@@ -1,5 +1,5 @@
 import { useCallback, useLayoutEffect, useRef } from 'react';
-import getInnerYDimensions from '@jstoolkit/web-utils/getInnerYDimensions';
+import getInnerYDimensions from '@js-toolkit/web-utils/getInnerYDimensions';
 import useUpdatedRefState from './useUpdatedRefState';
 
 type SlideDirection = 'left' | 'right';

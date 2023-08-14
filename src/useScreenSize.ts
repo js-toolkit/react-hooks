@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { rafCallback } from '@jstoolkit/web-utils/rafCallback';
+import { rafCallback } from '@js-toolkit/web-utils/rafCallback';
 import {
   getScreenSize,
   type GetScreenSizeProps,
   type ScreenSize,
-} from '@jstoolkit/web-utils/getScreenSize';
+} from '@js-toolkit/web-utils/getScreenSize';
 import useRefState from './useRefState';
 
 export type { ScreenSize };

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import debounce from '@jstoolkit/utils/debounce';
+import debounce from '@js-toolkit/utils/debounce';
 import useRefCallback from './useRefCallback';
 
 type BaseEvent = PartialSome<Pick<React.TouchEvent, 'timeStamp' | 'detail' | 'persist'>, 'persist'>;
