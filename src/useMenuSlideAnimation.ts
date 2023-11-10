@@ -89,6 +89,8 @@ export default function useMenuSlideAnimation<S>(
         node.style.transition += (node.style.transition ? ', ' : '') + transition;
       }
       node.style.opacity = '0';
+      // Fix size during the exiting in order to avoid showing scrollbars etc.
+      node.style.height = `${node.offsetHeight}px`;
     },
     [transitionDuration, transitionEasing]
   );
