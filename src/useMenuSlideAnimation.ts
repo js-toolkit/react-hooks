@@ -1,6 +1,7 @@
-import { useCallback, useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { getInnerYDimensions } from '@js-toolkit/web-utils/getInnerYDimensions';
 import useUpdatedRefState from './useUpdatedRefState';
+import useRefCallback from './useRefCallback';
 
 type SlideDirection = 'left' | 'right';
 
@@ -58,63 +59,52 @@ export default function useMenuSlideAnimation<S>(
     setState(nextState);
   }, [nextState, setState]);
 
-  const onContentEnter = useCallback(
-    (node0: HTMLElement) => {
-      const { current: root } = rootRef;
-      if (!root) return;
+  const onContentEnter = useRefCallback((node0: HTMLElement) => {
+    const { current: root } = rootRef;
+    if (!root) return;
 
-      const node = node0;
-      const { top, bottom } = getInnerYDimensions(root);
+    const node = node0;
+    const { top, bottom } = getInnerYDimensions(root);
 
-      root.style.height = `${node.offsetHeight + top + bottom}px`;
+    root.style.height = `${node.offsetHeight + top + bottom}px`;
 
-      node.style.position = 'absolute';
-      node.style.width = '100%';
-      node.style.height = `${node.offsetHeight}px`;
-    },
-    [rootRef]
-  );
+    node.style.position = 'absolute';
+    node.style.width = '100%';
+    node.style.height = `${node.offsetHeight}px`;
+  });
 
-  const onContentEntered = useCallback((node0: HTMLElement) => {
+  const onContentEntered = useRefCallback((node0: HTMLElement) => {
     const node = node0;
     // In order to shrink or fill the parent (show scrollbar etc)
     node.style.height = '100%';
-  }, []);
+  });
 
-  const onContentExit = useCallback(
-    (node0: HTMLElement) => {
-      const node = node0;
-      const transition = `opacity ${transitionDuration / 2}ms ${transitionEasing}`;
-      if (node.style.transition.indexOf(transition) < 0) {
-        node.style.transition += (node.style.transition ? ', ' : '') + transition;
-      }
-      node.style.opacity = '0';
-      // Fix size during the exiting in order to avoid showing scrollbars etc.
-      node.style.height = `${node.offsetHeight}px`;
-    },
-    [transitionDuration, transitionEasing]
-  );
+  const onContentExit = useRefCallback((node0: HTMLElement) => {
+    const node = node0;
+    const transition = `opacity ${transitionDuration / 2}ms ${transitionEasing}`;
+    if (node.style.transition.indexOf(transition) < 0) {
+      node.style.transition += (node.style.transition ? ', ' : '') + transition;
+    }
+    node.style.opacity = '0';
+    // Fix size during the exiting in order to avoid showing scrollbars etc.
+    node.style.height = `${node.offsetHeight}px`;
+  });
 
-  const onRootEntered = useCallback(
-    (node: HTMLElement) => {
-      const root = node;
-      // const { current: root } = rootRef;
-      // if (!root) return;
-      const { current: content } = contentRef;
-      if (!content) return;
-      const transition = `width ${transitionDuration}ms ${transitionEasing}, height ${transitionDuration}ms ${transitionEasing}`;
-      if (root.style.transition.indexOf(transition) < 0) {
-        root.style.transition += (root.style.transition ? ', ' : '') + transition;
-      }
+  const onRootEntered = useRefCallback((node: HTMLElement) => {
+    const root = node;
+    const { current: content } = contentRef;
+    if (!content) return;
+    const transition = `width ${transitionDuration}ms ${transitionEasing}, height ${transitionDuration}ms ${transitionEasing}`;
+    if (root.style.transition.indexOf(transition) < 0) {
+      root.style.transition += (root.style.transition ? ', ' : '') + transition;
+    }
+    window.requestAnimationFrame(() => {
+      onContentEnter(content);
       window.requestAnimationFrame(() => {
-        onContentEnter(content);
-        window.requestAnimationFrame(() => {
-          onContentEntered(content);
-        });
+        onContentEntered(content);
       });
-    },
-    [contentRef, onContentEnter, onContentEntered, transitionDuration, transitionEasing]
-  );
+    });
+  });
 
   return {
     onRootEntered,
