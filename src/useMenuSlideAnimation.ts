@@ -1,7 +1,6 @@
-import { useLayoutEffect, useRef } from 'react';
 import { getInnerYDimensions } from '@js-toolkit/web-utils/getInnerYDimensions';
-import useUpdatedRefState from './useUpdatedRefState';
 import useRefCallback from './useRefCallback';
+import useSlideAnimationDirection from './useSlideAnimationDirection';
 
 type SlideDirection = 'left' | 'right';
 
@@ -36,28 +35,10 @@ export default function useMenuSlideAnimation<S>(
   }: UseMenuSlideAnimationProps<S>,
   deps: React.DependencyList = []
 ): UseMenuSlideAnimationResult<S> {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const [getState, setState] = useUpdatedRefState(() => nextState, deps);
-
-  const currentState = getState();
-
-  const lastLevelRef = useRef(nextLevel);
-
-  const propsStateUpdated = currentState === nextState;
-
-  const slideDirection: SlideDirection =
-    // Pre update (for exit animation)
-    (!propsStateUpdated && (lastLevelRef.current < nextLevel ? 'right' : 'left')) ||
-    // On update (for enter animation)
-    (lastLevelRef.current < nextLevel ? 'left' : 'right');
-
-  if (propsStateUpdated) {
-    lastLevelRef.current = nextLevel;
-  }
-
-  useLayoutEffect(() => {
-    setState(nextState);
-  }, [nextState, setState]);
+  const { currentLevel, currentState, slideDirection } = useSlideAnimationDirection(
+    { nextLevel, nextState },
+    deps
+  );
 
   const onContentEnter = useRefCallback((node0: HTMLElement) => {
     const { current: root } = rootRef;
@@ -112,7 +93,7 @@ export default function useMenuSlideAnimation<S>(
     onContentEntered,
     onContentExit,
     slideDirection,
-    currentLevel: lastLevelRef.current,
+    currentLevel,
     currentState,
     transitionDuration,
     transitionEasing,
