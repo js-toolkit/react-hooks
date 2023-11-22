@@ -19,6 +19,7 @@ export interface UseMenuSlideAnimationResult<S>
   readonly onContentEnter: (node: HTMLElement) => void;
   readonly onContentEntered: (node: HTMLElement) => void;
   readonly onContentExit: (node: HTMLElement) => void;
+  readonly recalcRoot: (contentHeight?: number | HTMLElement | undefined) => void;
   readonly slideDirection: SlideDirection;
   readonly currentLevel: number;
   readonly currentState: S;
@@ -40,15 +41,21 @@ export default function useMenuSlideAnimation<S>(
     deps
   );
 
-  const onContentEnter = useRefCallback((node0: HTMLElement) => {
+  const recalcRoot = (contentHeight?: number | HTMLElement | undefined): void => {
     const { current: root } = rootRef;
-    if (!root) return;
-
-    const node = node0;
+    const { current: content } = contentRef;
+    if (!root || !content) return;
     const { top, bottom } = getInnerYDimensions(root);
+    const height =
+      contentHeight instanceof HTMLElement
+        ? contentHeight.offsetHeight
+        : contentHeight ?? content.offsetHeight;
+    root.style.height = `${height + top + bottom}px`;
+  };
 
-    root.style.height = `${node.offsetHeight + top + bottom}px`;
-
+  const onContentEnter = useRefCallback((node0: HTMLElement) => {
+    recalcRoot();
+    const node = node0;
     node.style.position = 'absolute';
     node.style.width = '100%';
     node.style.height = `${node.offsetHeight}px`;
@@ -92,6 +99,7 @@ export default function useMenuSlideAnimation<S>(
     onContentEnter,
     onContentEntered,
     onContentExit,
+    recalcRoot,
     slideDirection,
     currentLevel,
     currentState,
