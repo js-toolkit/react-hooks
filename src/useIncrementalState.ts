@@ -8,7 +8,7 @@ export interface UseIncrementalStateResult {
 
 export default function useIncrementalState(initialState = 0): UseIncrementalStateResult {
   const [store] = useExtendedState(useRefState(initialState), ({ get, set }) => ({
-    inc: () => set((prev) => prev + 1),
+    inc: () => set((prev) => (prev >= Number.MAX_SAFE_INTEGER ? 1 : prev + 1)),
     get value() {
       return get();
     },
