@@ -6,7 +6,7 @@ import { useEffect, useMemo } from 'react';
  */
 export default function useMemoDestructor<T>(
   factory: () => [value: T, destructor: (value: T) => void],
-  deps: React.DependencyList | undefined
+  deps: React.DependencyList = []
 ): T {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const [value, destructor] = useMemo(factory, deps);

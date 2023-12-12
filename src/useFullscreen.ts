@@ -28,7 +28,9 @@ export default function useFullscreen(
     if (!ref && !controllerRef.current) return noop;
     if (!controllerRef.current) {
       if (!ref?.current) return noop;
-      controllerRef.current = new FullscreenController(ref.current, videoRef?.current || undefined);
+      controllerRef.current = new FullscreenController(ref.current, {
+        fallback: videoRef?.current || undefined,
+      });
     }
     const { current: controller } = controllerRef;
 
@@ -38,15 +40,18 @@ export default function useFullscreen(
     };
 
     const changeHandler: FullscreenController.EventHandler<FullscreenController.Events.Change> = ({
-      isFullscreen,
-      video,
+      fullscreen,
+      type,
     }) => {
       // console.log(value, document.fullscreenElement?.scrollHeight);
       if (typeof async === 'number' || async === true) {
         // Update state on next tick in order for wait until browser complete dom operations
-        setTimeout(() => update(isFullscreen, !!video), typeof async === 'number' ? async : 0);
+        setTimeout(
+          () => update(fullscreen, type === 'video'),
+          typeof async === 'number' ? async : 0
+        );
       } else {
-        update(isFullscreen, !!video);
+        update(fullscreen, type === 'video');
       }
     };
 
