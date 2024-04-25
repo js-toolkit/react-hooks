@@ -3,8 +3,10 @@ import useFirstMount from './useFirstMount';
 import useUpdate from './useUpdate';
 
 export interface SetRefStateOptions {
-  /** Do not re-render after state set. */
-  silent?: boolean;
+  /** Do not re-render after state set. Defaults to false. */
+  readonly silent?: boolean;
+  /** Force update react state. Ignored when silent is `true`. Defaults to false. */
+  readonly force?: boolean;
 }
 
 export type UpdateState<S> = (
@@ -62,12 +64,12 @@ export default function useRefState<S>(
   const getState = useCallback(() => stateRef.current, []);
 
   const setState = useCallback(
-    (state: React.SetStateAction<S | undefined>, { silent }: SetRefStateOptions = {}) => {
+    (state: React.SetStateAction<S | undefined>, { silent, force }: SetRefStateOptions = {}) => {
       const nextState =
         typeof state === 'function'
           ? (state as React.ReducerWithoutAction<S | undefined>)(stateRef.current)
           : state;
-      const shouldUpdate = stateRef.current !== nextState;
+      const shouldUpdate = force || stateRef.current !== nextState;
       stateRef.current = nextState;
       shouldUpdate && !silent && update();
     },
@@ -75,8 +77,8 @@ export default function useRefState<S>(
   );
 
   const patchState = useCallback(
-    (patch: Partial<S | undefined>, { silent }: SetRefStateOptions = {}) => {
-      const shouldUpdate = stateRef.current !== patch;
+    (patch: Partial<S | undefined>, { silent, force }: SetRefStateOptions = {}) => {
+      const shouldUpdate = force || stateRef.current !== patch;
       if (patch != null && Array.isArray(patch)) {
         stateRef.current = patch as S;
       } else if (patch != null && typeof patch === 'object') {
