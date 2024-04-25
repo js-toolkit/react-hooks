@@ -24,7 +24,10 @@ export default function useRafState<S>(
 ] {
   const [getState, setState, patch] = useRefState(initialState);
 
-  const setRafState: typeof setState = useRafCallback((value) => setState(value), [setState]);
+  const setRafState: typeof setState = useRafCallback(
+    (value, options) => setState(value, options),
+    [setState]
+  );
 
   return [getState, setRafState, patch];
 }
