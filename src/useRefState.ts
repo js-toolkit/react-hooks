@@ -1,6 +1,7 @@
-import React, { useCallback, useRef } from 'react';
+import React from 'react';
 import useFirstMount from './useFirstMount';
 import useUpdate from './useUpdate';
+import useRefCallback from './useRefCallback';
 
 export interface SetRefStateOptions {
   /** Do not re-render after state set. Defaults to false. */
@@ -52,7 +53,7 @@ export default function useRefState<S>(
 ] {
   const update = useUpdate();
   const firstMount = useFirstMount();
-  const stateRef = useRef<S | undefined>();
+  const stateRef = React.useRef<S | undefined>();
 
   if (firstMount) {
     stateRef.current =
@@ -61,9 +62,9 @@ export default function useRefState<S>(
       (typeof initialState === 'function' ? (initialState as () => S)() : initialState);
   }
 
-  const getState = useCallback(() => stateRef.current, []);
+  const getState = useRefCallback(() => stateRef.current);
 
-  const setState = useCallback(
+  const setState = useRefCallback(
     (state: React.SetStateAction<S | undefined>, { silent, force }: SetRefStateOptions = {}) => {
       const nextState =
         typeof state === 'function'
@@ -72,11 +73,10 @@ export default function useRefState<S>(
       const shouldUpdate = force || stateRef.current !== nextState;
       stateRef.current = nextState;
       shouldUpdate && !silent && update();
-    },
-    [update]
+    }
   );
 
-  const patchState = useCallback(
+  const patchState = useRefCallback(
     (patch: Partial<S | undefined>, { silent, force }: SetRefStateOptions = {}) => {
       const shouldUpdate = force || stateRef.current !== patch;
       if (patch != null && Array.isArray(patch)) {
@@ -87,8 +87,7 @@ export default function useRefState<S>(
         stateRef.current = patch;
       }
       shouldUpdate && !silent && update();
-    },
-    [update]
+    }
   );
 
   // // Update RefState during render
