@@ -1,13 +1,15 @@
-const config: import('eslint').Linter.Config = {
-  rules: {
-    'react-hooks/exhaustive-deps': [
-      'error',
-      {
-        additionalHooks:
-          '(useAsync|useDoubleClick|useDoubleTap|useHideableState|useMemoDestructor|useObjectURL|useRafCallback|useUpdatedRefState|useUpdatedRefValue|useUpdatedState|useUpdatedValue|useUpdateEffect|useAsyncEffect)',
-      },
-    ],
+const config: import('eslint').Linter.FlatConfig[] = [
+  {
+    rules: {
+      'react-hooks/exhaustive-deps': [
+        'error',
+        {
+          additionalHooks:
+            '(useAsync|useDoubleClick|useDoubleTap|useHideableState|useMemoDestructor|useObjectURL|useRafCallback|useUpdatedRefState|useUpdatedRefValue|useUpdatedState|useUpdatedValue|useUpdateEffect|useAsyncEffect)',
+        },
+      ],
+    },
   },
-};
+];
 
 module.exports = config;
