@@ -51,6 +51,8 @@ export default function useMenuSlideAnimation<S>(
         ? contentHeight.offsetHeight
         : contentHeight ?? content.offsetHeight;
     root.style.height = `${height + top + bottom}px`;
+    // Set here instead of in `onContentEnter` for smoother experience.
+    content.style.height = `${height}px`;
   };
 
   const onContentEnter = useRefCallback((node0: HTMLElement) => {
@@ -58,13 +60,15 @@ export default function useMenuSlideAnimation<S>(
     const node = node0;
     node.style.position = 'absolute';
     node.style.width = '100%';
-    node.style.height = `${node.offsetHeight}px`;
+    // node.style.height = `${node.offsetHeight}px`;
   });
 
   const onContentEntered = useRefCallback((node0: HTMLElement) => {
     const node = node0;
     // In order to shrink or fill the parent (show scrollbar etc)
-    node.style.height = '100%';
+    // node.style.height = '100%';
+    const { top, bottom } = getInnerYDimensions(node.parentElement!);
+    node.style.height = `calc(100% - ${top + bottom}px)`;
   });
 
   const onContentExit = useRefCallback((node0: HTMLElement) => {
