@@ -1,7 +1,7 @@
 import { type MutableRefObject, type RefObject, useRef } from 'react';
 import useFirstMount from './useFirstMount';
 
-type UpdateRef<A, B> = (nextValue: A, prevValue: A | undefined) => B;
+type UpdateRef<A, B> = (nextValue: A, prevValue: A) => B;
 
 function useUpdatedRef<T>(initialValue: T, update?: UpdateRef<T, T>): MutableRefObject<T>;
 
