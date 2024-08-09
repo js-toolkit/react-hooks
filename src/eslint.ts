@@ -1,4 +1,4 @@
-const config: import('eslint').Linter.FlatConfig[] = [
+const config: import('eslint').Linter.Config[] = [
   {
     rules: {
       'react-hooks/exhaustive-deps': [

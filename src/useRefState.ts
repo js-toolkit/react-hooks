@@ -72,7 +72,7 @@ export default function useRefState<S>(
           : state;
       const shouldUpdate = force || stateRef.current !== nextState;
       stateRef.current = nextState;
-      shouldUpdate && !silent && update();
+      if (shouldUpdate && !silent) update();
     }
   );
 
@@ -86,7 +86,7 @@ export default function useRefState<S>(
       } else {
         stateRef.current = patch;
       }
-      shouldUpdate && !silent && update();
+      if (shouldUpdate && !silent) update();
     }
   );
 

@@ -20,6 +20,9 @@ export interface Activate {
 }
 
 export interface AutoToggleState {
+  /**
+   * @param noWait If prev calling of `setActive` was called with `noWait` option.
+   */
   readonly isActive: (noWait?: boolean) => boolean;
   readonly isDisabled: () => boolean;
   readonly activate: Activate;
@@ -78,9 +81,7 @@ export default function useAutoToggle({
       },
       deactivate: () => {
         deactivateDebouncedRef.current.cancel();
-        if (getActive()) {
-          setActive(false);
-        }
+        if (getActive()) setActive(false);
       },
       get deactivateDebounced() {
         return deactivateDebouncedRef.current;
@@ -99,7 +100,7 @@ export default function useAutoToggle({
   // Deactivate early if disabled changed to `true`
   useEffect(
     () => () => {
-      !disabled && state.deactivate();
+      if (!disabled) state.deactivate();
     },
     [disabled, state]
   );

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import debounce from 'lodash.debounce';
+import { debounce } from '@js-toolkit/utils/debounce';
 import useRefState from './useRefState';
 
 /** [getActive(), getData(), set(boolean, Data), updateData(Data) cancel()] */

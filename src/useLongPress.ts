@@ -5,7 +5,7 @@ import useMemoDestructor from './useMemoDestructor';
 import useRefCallback from './useRefCallback';
 
 type BaseEvent = PartialSome<Pick<React.TouchEvent, 'timeStamp' | 'detail' | 'persist'>, 'persist'>;
-type BaseHandler<E> = (event: E) => any;
+type BaseHandler<E> = (event: E) => unknown;
 
 export interface UseLongPressProps {
   readonly delay?: number | undefined;
@@ -34,15 +34,16 @@ export default function useLongPress<
   return useMemo(
     () => ({
       onDown: (event) => {
-        preventDefaultProp && event instanceof Event && preventDefault(event);
+        if (preventDefaultProp && event instanceof Event) {
+          preventDefault(event);
+        }
         // event.persist && event.persist();
         callbackDebounced(...([event] as Parameters<H>));
       },
       onUp: (event) => {
-        callbackDebounced.isPending &&
-          preventDefaultProp &&
-          event instanceof Event &&
+        if (callbackDebounced.isPending && preventDefaultProp && event instanceof Event) {
           preventDefault(event);
+        }
         callbackDebounced.cancel();
       },
     }),

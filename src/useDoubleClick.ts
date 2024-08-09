@@ -67,7 +67,7 @@ export default function useDoubleClick<
 
     // Start debounce
     if (clickHandlerDebounced) {
-      event.persist && event.persist();
+      if (event.persist) event.persist();
       clickHandlerDebounced(...params);
     }
 
