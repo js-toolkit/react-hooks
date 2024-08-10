@@ -1,6 +1,6 @@
-import React from 'react';
 import { debounce, type DebouncedFunc } from '@js-toolkit/utils/debounce';
 import useRefCallback from './useRefCallback';
+import useMemoDestructor from './useMemoDestructor';
 
 export default function useDebounceCallback<
   T extends AnyFunction | undefined,
@@ -14,5 +14,5 @@ export default function useDebounceCallback<
   context: C | undefined = undefined
 ): DebouncedFunc<NonNullable<T>> {
   const cb = useRefCallback(callback, context);
-  return React.useMemo(() => debounce(cb, wait), [cb, wait]);
+  return useMemoDestructor(() => [debounce(cb, wait), (d) => d.cancel()], [cb, wait]);
 }
