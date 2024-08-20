@@ -1,22 +1,26 @@
-import { type MutableRefObject, type RefObject, useRef } from 'react';
-import useFirstMount from './useFirstMount';
+import React from 'react';
 
 type UpdateRef<A, B> = (nextValue: A, prevValue: A) => B;
 
-function useUpdatedRef<T>(initialValue: T, update?: UpdateRef<T, T>): MutableRefObject<T>;
+const nullValue = Symbol.for('@@__useUpdatedRef_initial');
+
+function useUpdatedRef<T>(value: T, update?: UpdateRef<T, T>): React.MutableRefObject<T>;
 
 function useUpdatedRef<T>(
-  initialValue: T | null,
+  value: T | null,
   update?: UpdateRef<T | null, T | null>
-): RefObject<T>;
+): React.RefObject<T>;
 
 function useUpdatedRef<T>(
   value: T | undefined | null,
   update?: UpdateRef<T | undefined | null, T | undefined | null>
 ): unknown {
-  const ref = useRef(value);
-  const firstMount = useFirstMount();
-  if (!firstMount) {
+  const ref = React.useRef(nullValue as typeof value);
+  if (ref.current === nullValue) {
+    ref.current = value;
+  }
+  // Update on every render
+  else {
     ref.current = update ? update(value, ref.current) : value;
   }
   return ref;
