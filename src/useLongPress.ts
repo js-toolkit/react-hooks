@@ -4,26 +4,27 @@ import { preventDefault } from '@js-toolkit/web-utils/preventDefault';
 import useMemoDestructor from './useMemoDestructor';
 import useRefCallback from './useRefCallback';
 
-type BaseEvent = PartialSome<Pick<React.TouchEvent, 'timeStamp' | 'detail' | 'persist'>, 'persist'>;
+// type BaseEvent = PartialSome<Pick<React.TouchEvent, 'timeStamp' | 'detail' | 'persist'>, 'persist'>;
 
-export interface UseLongPressProps<E extends BaseEvent, D> {
+export interface UseLongPressProps<E /* extends BaseEvent */, D> {
   readonly delay?: number | undefined;
   readonly preventDefault?: boolean | undefined;
+  /** Filter event before activating then longpress timer. */
   readonly filter?: (event: E) => boolean;
-  /** If longpress was activated but not invoked yet. */
+  /** If longpress timer was activated but not invoked yet. */
   readonly onCancel?: (event: E) => unknown;
-  /** If longpress was activated and invoked. */
+  /** If longpress timer was activated and invoked. */
   readonly onEnd?: (event: E, callbackData: D) => unknown;
-  /** If longpress was not activated. */
+  /** If longpress timer was not activated. */
   readonly fallback?: (event: E) => unknown;
 }
 
-export interface UseLongPressResult<E extends BaseEvent> {
+export interface UseLongPressResult<E /* extends BaseEvent */> {
   readonly onDown: (event: E) => void;
   readonly onUp: (event: E) => void;
 }
 
-export default function useLongPress<E extends BaseEvent, D = unknown>(
+export default function useLongPress<E /* extends BaseEvent */, D = unknown>(
   callback: (event: E) => D,
   {
     delay = 500,
