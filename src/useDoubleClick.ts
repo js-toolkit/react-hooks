@@ -1,8 +1,9 @@
 import React from 'react';
 import { debounce } from '@js-toolkit/utils/debounce';
+import useMemoDestructor from './useMemoDestructor';
 import useRefCallback from './useRefCallback';
 
-type BaseEvent = PartialSome<Pick<React.TouchEvent, 'timeStamp' | 'detail' | 'persist'>, 'persist'>;
+type BaseEvent = PartialSome<Pick<React.UIEvent, 'timeStamp' | 'detail' | 'persist'>, 'persist'>;
 type BaseHandler<E> = (event: E) => any;
 
 export interface UseDoubleClickProps<
@@ -34,18 +35,15 @@ export default function useDoubleClick<
   const onDebounceClick = debounceClick?.handler;
   const debounceDelay = debounceClick?.delay;
 
-  const clickHandlerDebounced = React.useMemo(() => {
-    return onDebounceClick ? debounce<H>(onDebounceClick, debounceDelay) : undefined;
-  }, [debounceDelay, onDebounceClick]);
+  const clickHandlerDebounced = useMemoDestructor(
+    () => [
+      onDebounceClick ? debounce<H>(onDebounceClick, debounceDelay) : undefined,
+      (d) => d?.cancel(),
+    ],
+    [debounceDelay, onDebounceClick]
+  );
 
   const lastTimeRef = React.useRef(0);
-
-  React.useEffect(
-    () => () => {
-      clickHandlerDebounced?.cancel();
-    },
-    [clickHandlerDebounced]
-  );
 
   return useRefCallback((...params: Parameters<H>) => {
     const event = params[0];
@@ -56,30 +54,32 @@ export default function useDoubleClick<
     const doubleClick =
       (event.detail > 0 && event.detail % 2 === 0 && lastTimeRef.current > 0) ||
       // On old ios versions `event.detail` always equals `1`,
-      // on other than mouse events `event.detail` always equals `0`
+      // on other than mouse events `event.detail` always equals `0`,
       // so checking delay manually.
-      ((event.detail <= 1) && delay > 0 && delay <= defaultDelay);
+      (event.detail <= 1 && delay > 0 && delay <= defaultDelay);
 
-    if (doubleClick) {
-      lastTimeRef.current = 0;
-      // Cancel if double click
-      clickHandlerDebounced?.cancel();
-      onDoubleClick(event);
-      return;
+    lastTimeRef.current = currentTime;
+
+    if (event.detail <= 1) {
+      event.detail = doubleClick ? 2 : 1;
     }
 
-    const res = onClick && onClick(...params);
-    if (res === false) {
+    const processNext = onClick && onClick(...params);
+    if (processNext === false) {
       lastTimeRef.current = 0;
       return;
     }
 
     // Start debounce
     if (clickHandlerDebounced) {
+      clickHandlerDebounced.cancel();
       if (event.persist) event.persist();
       clickHandlerDebounced(...params);
     }
 
-    lastTimeRef.current = currentTime;
+    if (doubleClick) {
+      lastTimeRef.current = 0;
+      onDoubleClick(event);
+    }
   }) as H;
 }
