@@ -26,6 +26,7 @@ type StateByAsyncFn<F extends AnyAsyncFunction> = ReturnType<F> extends Promise<
   : AsyncState<unknown>;
 
 export type UseAsyncProps<F extends AnyAsyncFunction> = Partial<StateByAsyncFn<F>> & {
+  /** fn parameters or boolean state for initial loading. */
   loading?: Parameters<F> | boolean;
   fn: F;
   /** Called when the `deps` changes or the component is unmount. */
