@@ -1,17 +1,24 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { useCallback } from 'react';
 
 export default function useRefs<T>(
-  refs: readonly (React.Ref<T> | undefined)[],
-  onMount?: (instance: T) => void,
-  onUnmount?: VoidFunction
+  ...args: [
+    refs: readonly (React.Ref<T> | undefined)[],
+    onMount?: (instance: T) => void,
+    onUnmount?: VoidFunction,
+  ]
 ): React.RefCallback<T>;
 
 export default function useRefs<T>(...refs: (React.Ref<T> | undefined)[]): React.RefCallback<T>;
 
 export default function useRefs<T>(
   ...args:
-    | (React.Ref<T> | undefined)[]
-    | [readonly (React.Ref<T> | undefined)[], ((instance: T) => void)?, VoidFunction?]
+    | readonly (React.Ref<T> | undefined)[]
+    | [
+        refs: readonly (React.Ref<T> | undefined)[],
+        onMount?: (instance: T) => void,
+        onUnmount?: VoidFunction,
+      ]
 ): React.RefCallback<T> {
   const withCallbacks = Array.isArray(args[0]);
   // const onMount = withCallbacks ? [args[1] as VoidFunction] : undefined;
@@ -30,7 +37,6 @@ export default function useRefs<T>(
         if (typeof r === 'function') {
           (r as React.RefCallback<T>)(instance);
         } else if (r) {
-          // eslint-disable-next-line no-param-reassign
           (r as React.MutableRefObject<T | null>).current = instance;
         }
       });

@@ -24,12 +24,12 @@ export default function useDoubleClick<
   E extends BaseEvent,
   H extends BaseHandler<E> = BaseHandler<E>,
 >(factory: () => UseDoubleClickProps<E, H>, deps: React.DependencyList = []): H {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const {
     onClick,
     debounceClick,
     delay: defaultDelay = 350,
     onDoubleClick,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   } = React.useMemo(factory, deps);
 
   const onDebounceClick = debounceClick?.handler;
@@ -56,6 +56,7 @@ export default function useDoubleClick<
       // On old ios versions `event.detail` always equals `1`,
       // on other than mouse events `event.detail` always equals `0`,
       // so checking delay manually.
+      // https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail
       (event.detail <= 1 && delay > 0 && delay <= defaultDelay);
 
     lastTimeRef.current = currentTime;
