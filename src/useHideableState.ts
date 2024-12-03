@@ -11,6 +11,7 @@ export type UseHideableStateResult = HideableState & {
   show: VoidFunction;
   hide: VoidFunction;
   disable: VoidFunction;
+  getState: () => HideableState;
 };
 
 export default function useHideableState(
@@ -49,6 +50,7 @@ export default function useHideableState(
       show,
       hide,
       disable,
+      getState,
     }),
     [disable, getState, hide, show]
   );
