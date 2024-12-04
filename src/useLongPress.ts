@@ -46,6 +46,15 @@ function isPointerEventLike(
   );
 }
 
+/**
+ * Example of using:
+ * ```
+ * onPointerDown={longPress.onDown}
+ * onPointerUp={longPress.onUp}
+ * onPointerCancel={longPress.onUp}
+ * onContextMenu={longPress.onUp} // onPointerUp is not invoked if contextmenu is not prevented.
+ * ```
+ */
 export function getLongPress<E, D = unknown>(
   callback: (event: E) => D,
   {
