@@ -12,7 +12,7 @@ export default function useRefCallback<
     unknown
   >,
 >(callback: NonNullable<T>, context: C | undefined = undefined): NonNullable<T> {
-  const ref = React.useRef<RefCallback<NonNullable<T>>>();
+  const ref = React.useRef<RefCallback<NonNullable<T>>>(undefined);
 
   if (!ref.current) {
     ref.current = {

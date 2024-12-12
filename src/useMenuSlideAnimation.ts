@@ -5,8 +5,8 @@ import useSlideAnimationDirection from './useSlideAnimationDirection';
 type SlideDirection = 'left' | 'right';
 
 export interface UseMenuSlideAnimationProps<S> {
-  readonly rootRef: React.RefObject<HTMLElement>;
-  readonly contentRef: React.RefObject<HTMLElement>;
+  readonly rootRef: React.RefObject<HTMLElement | null>;
+  readonly contentRef: React.RefObject<HTMLElement | null>;
   readonly nextLevel?: number;
   readonly nextState: S;
   readonly transitionDuration?: number;
@@ -19,7 +19,7 @@ export interface UseMenuSlideAnimationResult<S>
   readonly onContentEnter: (node: HTMLElement) => void;
   readonly onContentEntered: (node: HTMLElement) => void;
   readonly onContentExit: (node: HTMLElement) => void;
-  readonly recalcRoot: (contentHeight?: number | HTMLElement | undefined) => void;
+  readonly recalcRoot: (contentHeight?: number | HTMLElement) => void;
   readonly slideDirection: SlideDirection;
   readonly currentLevel: number;
   readonly currentState: S;
@@ -41,7 +41,7 @@ export default function useMenuSlideAnimation<S>(
     deps
   );
 
-  const recalcRoot = (contentHeight?: number | HTMLElement | undefined): void => {
+  const recalcRoot = (contentHeight?: number | HTMLElement): void => {
     const { current: root } = rootRef;
     const { current: content } = contentRef;
     if (!root || !content) return;
@@ -49,7 +49,7 @@ export default function useMenuSlideAnimation<S>(
     const height =
       contentHeight instanceof HTMLElement
         ? contentHeight.offsetHeight
-        : contentHeight ?? content.offsetHeight;
+        : (contentHeight ?? content.offsetHeight);
     root.style.height = `${height + top + bottom}px`;
     // Set here instead of in `onContentEnter` for smoother experience.
     content.style.height = `${height}px`;

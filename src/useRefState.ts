@@ -53,7 +53,7 @@ export default function useRefState<S>(
 ] {
   const update = useUpdate();
   const firstMount = useFirstMount();
-  const stateRef = React.useRef<S | undefined>();
+  const stateRef = React.useRef<S>(undefined);
 
   if (firstMount) {
     stateRef.current =
