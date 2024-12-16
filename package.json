@@ -54,6 +54,6 @@
     "yargs": "^17.7.2"
   },
   "peerDependencies": {
-    "react": ">= 18"
+    "react": ">= 19"
   }
 }
