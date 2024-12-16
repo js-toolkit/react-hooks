@@ -22,8 +22,7 @@ type AsyncState<T> =
 type StateByAsyncFn<F extends AnyAsyncFunction> = AsyncState<Awaited<ReturnType<F>>>;
 
 export type UseAsyncProps<F extends AnyAsyncFunction> = Partial<StateByAsyncFn<F>> & {
-  /** Action parameters or boolean state for initial pending.
-   * If parameters are provided then they will be used as parameters for auto initial call of action. */
+  /** Action parameters or boolean for initial calling of action. */
   pending?: Parameters<F> | boolean;
   action: F;
   /** Called when the `deps` changes or the component is unmount. Eg. clean resources, stop timers, etc. */
