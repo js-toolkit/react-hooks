@@ -5,6 +5,7 @@
     "isolatedModules": false,
     "outDir": "./dist",
     "baseUrl": "./",
+    "types": ["node"],
     "declaration": true,
     "sourceMap": false,
     "incremental": true,
