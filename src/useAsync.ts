@@ -1,35 +1,32 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import React from 'react';
 import useIsMounted from './useIsMounted';
 import useRefState from './useRefState';
 
 type AsyncState<T> =
   | {
-      loading: true;
+      pending: true;
       error?: unknown;
-      value?: T;
+      value?: T | undefined;
     }
   | {
-      loading: false;
+      pending: false;
       error: unknown;
       value?: undefined;
     }
   | {
-      loading: false;
+      pending: false;
       error?: undefined;
-      value: T;
+      value: T | undefined;
     };
 
-type StateByAsyncFn<F extends AnyAsyncFunction> = ReturnType<F> extends Promise<infer T>
-  ? AsyncState<T>
-  : AsyncState<unknown>;
+type StateByAsyncFn<F extends AnyAsyncFunction> = AsyncState<Awaited<ReturnType<F>>>;
 
 export type UseAsyncProps<F extends AnyAsyncFunction> = Partial<StateByAsyncFn<F>> & {
-  /** fn parameters or boolean state for initial loading. */
-  loading?: Parameters<F> | boolean;
-  fn: F;
-  /** Called when the `deps` changes or the component is unmount. */
+  /** Action parameters or boolean state for initial pending.
+   * If parameters are provided then they will be used as parameters for auto initial call of action. */
+  pending?: Parameters<F> | boolean;
+  action: F;
+  /** Called when the `deps` changes or the component is unmount. Eg. clean resources, stop timers, etc. */
   onUnmount?: (state: StateByAsyncFn<F>) => void;
 };
 
@@ -43,41 +40,38 @@ export default function useAsync<F extends AnyAsyncFunction>(
   factory: () => UseAsyncProps<F> | F,
   deps: React.DependencyList = []
 ): UseAsyncResult<F> {
-  const lastCallId = useRef(0);
-  const activeCallsCount = useRef(0);
+  const lastCallId = React.useRef(0);
+  const activeCallsCount = React.useRef(0);
   const isMounted = useIsMounted();
 
-  const { fn, onUnmount, ...initialState } = useMemo(
+  const { action, onUnmount, ...initialState } = React.useMemo(
     () => {
-      const fnOrProps = factory();
-      if (typeof fnOrProps === 'function') return { fn: fnOrProps } as UseAsyncProps<F>;
-      return fnOrProps;
+      const actionOrProps = factory();
+      if (typeof actionOrProps === 'function') return { action: actionOrProps } as UseAsyncProps<F>;
+      return actionOrProps;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     deps
   );
 
-  const [getState, setState] = useRefState<StateByAsyncFn<F>>(
-    () =>
-      ({
-        loading: !!(initialState.loading ?? false),
-        error: initialState.error,
-        value: initialState.value,
-      }) as StateByAsyncFn<F>
-  );
+  const [getState, setState] = useRefState<StateByAsyncFn<F>>(() => ({
+    pending: !!(initialState.pending ?? false),
+    error: initialState.error,
+    value: initialState.value,
+  }));
 
-  const call = useCallback(
+  const call = React.useCallback(
     (...args: Parameters<F>): ReturnType<F> => {
       activeCallsCount.current += 1;
       lastCallId.current += 1;
       const callId = lastCallId.current;
-      setState((prev) => ({ ...prev, loading: true }));
+      setState((prev) => ({ ...prev, pending: true }));
 
       // eslint-disable-next-line prefer-spread
-      return fn
+      return action
         .apply(undefined, args)
         .then(
-          (value) => {
+          (value: Awaited<ReturnType<F>>) => {
             // Update value only for latest call
             if (isMounted() && callId === lastCallId.current) {
               setState((prev) => ({ ...prev, value }));
@@ -96,7 +90,7 @@ export default function useAsync<F extends AnyAsyncFunction>(
           if (isMounted()) {
             activeCallsCount.current = Math.max(0, activeCallsCount.current - 1);
             if (activeCallsCount.current === 0) {
-              setState((prev) => ({ ...prev, loading: false }));
+              setState((prev) => ({ ...prev, pending: false }));
             }
           } else {
             onUnmount && onUnmount(getState());
@@ -107,16 +101,16 @@ export default function useAsync<F extends AnyAsyncFunction>(
     deps
   );
 
-  useEffect(
+  React.useEffect(
     () => {
-      if (initialState.loading) {
+      if (initialState.pending) {
         void call(
-          ...((Array.isArray(initialState.loading) ? initialState.loading : []) as Parameters<F>)
+          ...((Array.isArray(initialState.pending) ? initialState.pending : []) as Parameters<F>)
         );
       }
 
       return () => {
-        // Eg clean resources, stop timers, etc
+        // Eg. clean resources, stop timers, etc.
         onUnmount && onUnmount(getState());
       };
     },
