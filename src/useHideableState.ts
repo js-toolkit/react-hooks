@@ -18,6 +18,7 @@ export default function useHideableState(
   state: HideableState | ((prevState?: HideableState) => HideableState),
   updateStateDeps: React.DependencyList = []
 ): UseHideableStateResult {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const [getState, setState] = useUpdatedRefState(state, updateStateDeps);
 
   const show = useCallback(() => {
