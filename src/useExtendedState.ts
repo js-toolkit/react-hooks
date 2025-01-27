@@ -1,16 +1,12 @@
 import { useRef } from 'react';
 
-interface ExtendFactory<S, T> {
-  (state: { get: () => S; set: React.Dispatch<React.SetStateAction<S>> }): T;
+interface ExtendFactory<S, T, SS extends React.Dispatch<React.SetStateAction<S>>> {
+  (state: { get: () => S; set: SS }): T;
 }
 
-export default function useExtendedState<S, E>(
-  stateMethods: [
-    getState: () => S,
-    setState: React.Dispatch<React.SetStateAction<S>>,
-    ...rest: unknown[],
-  ],
-  extend: ExtendFactory<S, E>
+export default function useExtendedState<S, E, SS extends React.Dispatch<React.SetStateAction<S>>>(
+  stateMethods: [getState: () => S, setState: SS, ...rest: unknown[]],
+  extend: ExtendFactory<S, E, SS>
 ): [E, ...typeof stateMethods] {
   const extended = useRef<E>(undefined as unknown as E);
 
