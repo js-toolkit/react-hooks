@@ -40,8 +40,7 @@ export default function useFullscreen(
     };
 
     const changeHandler: FullscreenController.EventHandler<FullscreenController.Events.Change> = ({
-      fullscreen,
-      type,
+      data: { type, fullscreen },
     }) => {
       // console.log(value, document.fullscreenElement?.scrollHeight);
       if (typeof async === 'number' || async === true) {
@@ -56,7 +55,7 @@ export default function useFullscreen(
     };
 
     const errorHandler: FullscreenController.EventHandler<FullscreenController.Events.Error> = ({
-      error,
+      data: { error },
     }) => {
       onError && onError(error);
     };
