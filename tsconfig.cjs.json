@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "rootDir": "src",
+    "tsBuildInfoFile": "dist/tsconfig.cjs.tsbuildinfo",
+    "composite": true,
+    "verbatimModuleSyntax": false
+  },
+  "include": ["src/eslint.ts"],
+  "exclude": []
+}

@@ -3,13 +3,15 @@
   "compilerOptions": {
     "module": "es2015",
     "isolatedModules": false,
-    "outDir": "./dist",
-    "baseUrl": "./",
+    "outDir": "dist",
+    "baseUrl": ".",
     "types": ["node"],
     "declaration": true,
     "sourceMap": false,
     "incremental": true,
     "diagnostics": true
   },
-  "include": ["./src/"]
+  "include": ["src"],
+  "exclude": ["src/eslint.ts"],
+  "references": [{ "path": "./tsconfig.cjs.json" }]
 }
