@@ -6,7 +6,7 @@ import useUpdatedRefState from './useUpdatedRefState';
 export type UseQueueResult<T> = [
   queueItem: T | undefined,
   nextInQueue: () => boolean,
-  queue: Queue<T>,
+  getQueue: () => Queue<T>,
 ];
 
 export function useQueue<T>(
@@ -28,5 +28,7 @@ export function useQueue<T>(
     return nextQueueItem != null;
   });
 
-  return [queueItem, nextInQueue, queue];
+  const getQueue = useRefCallback(() => queue);
+
+  return [queueItem, nextInQueue, getQueue];
 }
