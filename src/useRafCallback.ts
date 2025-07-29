@@ -1,20 +1,23 @@
-import { useCallback, useEffect, useRef } from 'react';
+import useMemoDestructor from './useMemoDestructor';
+
+type UseRafCallbackResult<T extends AnyFunction> = T & { cancelRaf: () => void };
 
 export default function useRafCallback<T extends AnyFunction>(
   callback: T,
   deps: React.DependencyList
-): T {
-  const frameRef = useRef(0);
-
-  useEffect(() => () => cancelAnimationFrame(frameRef.current), []);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useCallback(
-    ((...args: unknown[]) => {
-      frameRef.current = requestAnimationFrame(() => {
-        callback(...args);
-      });
-    }) as T,
+): UseRafCallbackResult<T> {
+  return useMemoDestructor(
+    () => {
+      let rafId: number;
+      const cb = ((...args: unknown[]) => {
+        rafId = requestAnimationFrame(() => {
+          callback(...args);
+        });
+      }) as UseRafCallbackResult<T>;
+      cb.cancelRaf = () => cancelAnimationFrame(rafId);
+      return [cb, (inst) => inst.cancelRaf()];
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     deps
   );
 }
