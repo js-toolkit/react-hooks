@@ -1,10 +1,9 @@
 import useRafCallback from './useRafCallback';
-import useRefState, { type SetRefStateOptions, type UpdateState } from './useRefState';
+import useRefState, { type SetRefStateOptions } from './useRefState';
 
 export default function useRafState<S = undefined>(): [
   getState: () => S | undefined,
   setState: (nextState: React.SetStateAction<S | undefined>, options?: SetRefStateOptions) => void,
-  patch: UpdateState<S | undefined>,
 ];
 
 export default function useRafState<S>(
@@ -12,7 +11,6 @@ export default function useRafState<S>(
 ): [
   getState: () => S,
   setState: (nextState: React.SetStateAction<S>, options?: SetRefStateOptions) => void,
-  patch: UpdateState<S>,
 ];
 
 export default function useRafState<S>(
@@ -20,14 +18,13 @@ export default function useRafState<S>(
 ): [
   getState: () => S | undefined,
   setState: (nextState: React.SetStateAction<S | undefined>, options?: SetRefStateOptions) => void,
-  patch: UpdateState<S | undefined>,
 ] {
-  const [getState, setState, patch] = useRefState(initialState);
+  const [getState, setState] = useRefState(initialState);
 
-  const setRafState: typeof setState = useRafCallback(
+  const setRafState = useRafCallback<typeof setState>(
     (value, options) => setState(value, options),
     [setState]
   );
 
-  return [getState, setRafState, patch];
+  return [getState, setRafState];
 }
