@@ -6,18 +6,18 @@ export interface HideableState {
   readonly visible: boolean;
 }
 
-export type UseHideableStateResult = HideableState & {
+export type UseHideableStateResult<S> = HideableState & {
   readonly hidden: boolean;
   show: VoidFunction;
   hide: VoidFunction;
   disable: VoidFunction;
-  getState: () => HideableState;
+  getState: () => S & HideableState;
 };
 
-export default function useHideableState(
-  state: HideableState | ((prevState?: HideableState) => HideableState),
+export default function useHideableState<S = HideableState>(
+  state: (S & HideableState) | ((prevState?: S & HideableState) => S & HideableState),
   updateStateDeps: React.DependencyList = []
-): UseHideableStateResult {
+): UseHideableStateResult<S> {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const [getState, setState] = useUpdatedRefState(state, updateStateDeps);
 
