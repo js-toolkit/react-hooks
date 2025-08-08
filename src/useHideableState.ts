@@ -15,6 +15,16 @@ export type UseHideableStateResult<S> = HideableState & {
 };
 
 export default function useHideableState<S = HideableState>(
+  state: S & HideableState,
+  updateStateDeps?: React.DependencyList
+): UseHideableStateResult<S>;
+
+export default function useHideableState<S = HideableState>(
+  state: (prevState?: S & HideableState) => S & HideableState,
+  updateStateDeps?: React.DependencyList
+): UseHideableStateResult<S>;
+
+export default function useHideableState<S = HideableState>(
   state: (S & HideableState) | ((prevState?: S & HideableState) => S & HideableState),
   updateStateDeps: React.DependencyList = []
 ): UseHideableStateResult<S> {
