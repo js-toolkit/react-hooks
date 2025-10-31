@@ -79,12 +79,10 @@ export default function useRefState<S>(
   const patchState = useRefCallback(
     (patch: Partial<S | undefined>, { silent, force }: SetRefStateOptions = {}) => {
       const shouldUpdate = force || stateRef.current !== patch;
-      if (patch != null && Array.isArray(patch)) {
-        stateRef.current = patch as S;
-      } else if (patch != null && typeof patch === 'object') {
+      if (patch != null && typeof patch === 'object' && !Array.isArray(patch)) {
         Object.assign(stateRef.current as AnyObject, patch);
       } else {
-        stateRef.current = patch;
+        stateRef.current = patch as S | undefined;
       }
       if (shouldUpdate && !silent) update();
     }
