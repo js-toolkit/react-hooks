@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
-import useFirstMount from './useFirstMount';
+import useIsFirstMount from './useIsFirstMount';
 
 export default function useUpdateEffect(
   effect: React.EffectCallback,
   deps?: React.DependencyList
 ): void {
-  const firstMount = useFirstMount();
+  const isFirstMount = useIsFirstMount();
 
   // eslint-disable-next-line consistent-return
   return useEffect(() => {
-    if (!firstMount) return effect();
+    if (!isFirstMount()) return effect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }

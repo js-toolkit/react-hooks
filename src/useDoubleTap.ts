@@ -33,7 +33,7 @@ export default function useDoubleTap<
         return;
       }
 
-      const res = tapHandler && tapHandler(...params);
+      const res = tapHandler?.(...params);
       if (res === false) {
         lastTimeRef.current = 0;
         return;
