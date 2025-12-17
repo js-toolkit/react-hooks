@@ -7,8 +7,15 @@ import useMemoDestructor from './useMemoDestructor';
 import useRefCallback from './useRefCallback';
 
 // type BaseEvent = PartialSome<Pick<React.TouchEvent, 'timeStamp' | 'detail' | 'persist'>, 'persist'>;
+type BaseEvent = PartialSome<
+  Pick<
+    React.PointerEvent,
+    'preventDefault' | 'cancelable' | 'currentTarget' | 'target' | 'persist'
+  >,
+  'persist'
+>;
 
-export interface UseLongPressProps<E /* extends BaseEvent */, D> {
+export interface UseLongPressProps<E extends BaseEvent, D> {
   readonly delay?: number | undefined;
   // readonly preventDefault?: boolean | undefined;
   /** Use `setPointerCapture`. Defaults to `true`. */
@@ -23,13 +30,13 @@ export interface UseLongPressProps<E /* extends BaseEvent */, D> {
   readonly fallback?: (event: E) => unknown;
 }
 
-export interface UseLongPressResult<E /* extends BaseEvent */> {
+export interface UseLongPressResult<E extends BaseEvent> {
   readonly onDown: (event: E) => void;
   readonly onUp: (event: E) => void;
   readonly isPressed: () => boolean;
 }
 
-interface LongPressResult<E> extends UseLongPressResult<E> {
+export interface LongPressHandlers<E extends BaseEvent> extends UseLongPressResult<E> {
   readonly cancel: VoidFunction;
 }
 
@@ -39,7 +46,7 @@ interface LongPressResult<E> extends UseLongPressResult<E> {
 
 function isPointerEventLike(
   event: unknown
-): event is Pick<React.PointerEvent, 'pointerId' | 'pointerType' | 'currentTarget'> {
+): event is Pick<React.PointerEvent, 'pointerId' | 'pointerType' | 'currentTarget' | 'target'> {
   return (
     hasIn(event as React.PointerEvent, 'pointerId') &&
     hasIn(event as React.PointerEvent, 'pointerType')
@@ -55,7 +62,7 @@ function isPointerEventLike(
  * onContextMenu={longPress.onUp} // onPointerUp is not invoked if contextmenu is not prevented.
  * ```
  */
-export function getLongPress<E, D = unknown>(
+export function getLongPressHandlers<E extends BaseEvent, D = unknown>(
   callback: (event: E) => D,
   {
     delay = 500,
@@ -66,26 +73,94 @@ export function getLongPress<E, D = unknown>(
     onEnd,
     fallback,
   }: UseLongPressProps<E, D> = {}
-): LongPressResult<E> {
-  let pressed = false;
+): LongPressHandlers<E> {
+  let pressed: E | undefined;
   // let prevented = false;
   // It needs for if event is filtered out.
   let callbackInvoked = false;
   let callbackData: D;
+  let pointerCount = 0;
+  // const pointersCache = new Map<number, E[]>();
 
-  const debouncedCallback = debounce((event: E, currentTarget: Element | undefined): D => {
-    if (captureEvents && currentTarget && isPointerEventLike(event)) {
-      currentTarget.setPointerCapture(event.pointerId);
+  const debouncedCallback = debounce((event: E): D => {
+    if (captureEvents && isPointerEventLike(event)) {
+      (event.currentTarget ?? event.target)?.setPointerCapture(event.pointerId);
     }
     callbackInvoked = true;
     callbackData = callback(event);
     return callbackData;
   }, delay);
 
+  const releaseCapture = (event: E): void => {
+    if (isPointerEventLike(event)) {
+      event.currentTarget?.hasPointerCapture(event.pointerId) &&
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      (event.target as Element)?.hasPointerCapture(event.pointerId) &&
+        (event.target as Element).releasePointerCapture(event.pointerId);
+    }
+  };
+
+  const halt = (event: E): void => {
+    if (debouncedCallback.isPending) {
+      debouncedCallback.cancel();
+      onCancel?.(event);
+    }
+  };
+
+  const up = (event: E, reset = false): void => {
+    if (pointerCount > 0 && !reset) {
+      pointerCount -= 1;
+    }
+    releaseCapture(event);
+
+    if (pointerCount === 0 || reset) pressed = undefined;
+    // If still at least one pointer/touch is pressed, do nothing.
+    else if (!reset) return;
+
+    // if (prevented && isEventLike(event)) {
+    //   preventDefault(event);
+    //   prevented = false;
+    // }
+
+    if (debouncedCallback.isPending) {
+      halt(event);
+    } else if (callbackInvoked) {
+      onEnd?.(event, callbackData);
+    } else {
+      fallback?.(event);
+    }
+
+    callbackInvoked = false;
+  };
+
+  const cancel = (): void => {
+    if (pressed) {
+      up(pressed, true);
+    }
+    pointerCount = 0;
+    debouncedCallback.cancel();
+  };
+
   return {
     onDown: (event) => {
-      pressed = true;
+      pointerCount += 1;
+      // If at least one pointer/touch is already pressed,
+      // do not invoke debouncedCallback again as it may already be invoked.
+      if (pressed) {
+        // Ignore next pointers if callbackInvoked.
+        if (callbackInvoked) return;
+        halt(pressed);
+        releaseCapture(pressed);
+        pressed = undefined;
+      }
+      if (pointerCount > 1) return;
+      // if (isPointerEventLike(event)) {
+      //   const events = pointersCache.get(event.pointerId) ?? [];
+      //   events.push(event);
+      //   pointersCache.set(event.pointerId, events);
+      // }
       if (filter && !filter(event)) return;
+      pressed = event;
 
       // if (preventDefaultProp && isEventLike(event)) {
       //   preventDefault(event);
@@ -93,39 +168,20 @@ export function getLongPress<E, D = unknown>(
       // }
 
       callbackInvoked = false;
-      (event as React.SyntheticEvent)?.persist();
-      debouncedCallback(event, (event as React.SyntheticEvent).currentTarget);
+      event.persist?.();
+      debouncedCallback(event);
     },
-    onUp: (event) => {
-      if (isPointerEventLike(event) && event.currentTarget.hasPointerCapture(event.pointerId)) {
-        event.currentTarget.releasePointerCapture(event.pointerId);
-      }
-
-      pressed = false;
-
-      // if (prevented && isEventLike(event)) {
-      //   preventDefault(event);
-      //   prevented = false;
-      // }
-
-      if (debouncedCallback.isPending) {
-        debouncedCallback.cancel();
-        if (onCancel) onCancel(event);
-      } else if (callbackInvoked) {
-        if (onEnd) onEnd(event, callbackData);
-      } else if (fallback) {
-        fallback(event);
-      }
-
-      callbackInvoked = false;
-    },
-    isPressed: () => pressed,
-    cancel: () => {
-      debouncedCallback.cancel();
-      // pressed = false;
-      // callbackInvoked = false;
-      // callbackData = undefined as D;
-    },
+    onUp: up,
+    isPressed: () => !!pressed,
+    cancel,
+    // cancel: () => {
+    //   debouncedCallback.cancel();
+    //   // pointersCache.clear();
+    //   // pointerCount = 0;
+    //   // pressed = false;
+    //   // callbackInvoked = false;
+    //   // callbackData = undefined as D;
+    // },
   };
 }
 
@@ -133,7 +189,7 @@ function trueFn(): boolean {
   return true;
 }
 
-export default function useLongPress<E /* extends BaseEvent */, D = unknown>(
+export default function useLongPress<E extends BaseEvent, D = unknown>(
   callback: (event: E) => D,
   {
     delay = 500,
@@ -152,7 +208,7 @@ export default function useLongPress<E /* extends BaseEvent */, D = unknown>(
   const fallbackRef = useRefCallback(fallback ?? noop);
 
   return useMemoDestructor(() => {
-    const longPress = getLongPress(callbackRef, {
+    const longPress = getLongPressHandlers(callbackRef, {
       delay,
       captureEvents,
       filter: filterRef,
