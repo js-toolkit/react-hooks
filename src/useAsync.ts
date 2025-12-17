@@ -1,4 +1,4 @@
-import React from 'react';
+import { useCallback, useEffect, useMemo, useRef, type DependencyList } from 'react';
 import useIsMounted from './useIsMounted';
 import useRefState from './useRefState';
 
@@ -37,13 +37,13 @@ type UseAsyncResult<F extends AnyAsyncFunction> = [
 
 export default function useAsync<F extends AnyAsyncFunction>(
   factory: () => UseAsyncProps<F> | F,
-  deps: React.DependencyList = []
+  deps: DependencyList = []
 ): UseAsyncResult<F> {
-  const lastCallId = React.useRef(0);
-  const activeCallsCount = React.useRef(0);
+  const lastCallId = useRef(0);
+  const activeCallsCount = useRef(0);
   const isMounted = useIsMounted();
 
-  const { action, onUnmount, ...initialState } = React.useMemo(
+  const { action, onUnmount, ...initialState } = useMemo(
     () => {
       const actionOrProps = factory();
       if (typeof actionOrProps === 'function') return { action: actionOrProps } as UseAsyncProps<F>;
@@ -59,7 +59,7 @@ export default function useAsync<F extends AnyAsyncFunction>(
     value: initialState.value,
   }));
 
-  const call = React.useCallback(
+  const call = useCallback(
     (...args: Parameters<F>): ReturnType<F> => {
       activeCallsCount.current += 1;
       lastCallId.current += 1;
@@ -92,7 +92,7 @@ export default function useAsync<F extends AnyAsyncFunction>(
               setState((prev) => ({ ...prev, pending: false }));
             }
           } else {
-            onUnmount && onUnmount(getState());
+            onUnmount?.(getState());
           }
         }) as ReturnType<F>;
     },
@@ -100,7 +100,7 @@ export default function useAsync<F extends AnyAsyncFunction>(
     deps
   );
 
-  React.useEffect(
+  useEffect(
     () => {
       if (initialState.pending) {
         void call(
@@ -110,7 +110,7 @@ export default function useAsync<F extends AnyAsyncFunction>(
 
       return () => {
         // Eg. clean resources, stop timers, etc.
-        onUnmount && onUnmount(getState());
+        onUnmount?.(getState());
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

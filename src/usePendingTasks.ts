@@ -1,9 +1,10 @@
 import { useCallback, useMemo } from 'react';
 import useRefState from './useRefState';
 
-export type PendingTasks<TaskKeys extends string> = { default: number } & {
-  [P in TaskKeys]?: number;
-};
+export type PendingTasks<TaskKeys extends string> = { default: number } & PartialRecord<
+  TaskKeys,
+  number
+>;
 
 export interface UsePendingResult<TaskKeys extends string> {
   isPending: (key?: keyof PendingTasks<TaskKeys>) => boolean;
