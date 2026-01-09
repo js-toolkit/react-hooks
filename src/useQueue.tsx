@@ -1,4 +1,4 @@
-import React from 'react';
+import { useMemo } from 'react';
 import { Queue } from '@js-toolkit/utils/Queue';
 import useRefCallback from './useRefCallback';
 import useUpdatedRefState from './useUpdatedRefState';
@@ -13,7 +13,7 @@ export function useQueue<T>(
   value: T | readonly T[],
   deps: React.DependencyList = [value]
 ): UseQueueResult<T> {
-  const queue = React.useMemo(
+  const queue = useMemo(
     () => new Queue(Array.isArray(value) ? value : [value]),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     deps
@@ -24,7 +24,7 @@ export function useQueue<T>(
 
   const nextInQueue = useRefCallback(() => {
     const nextQueueItem = queue.take();
-    if (nextQueueItem) setItem(nextQueueItem);
+    setItem(nextQueueItem);
     return nextQueueItem != null;
   });
 
