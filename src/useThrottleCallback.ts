@@ -1,9 +1,9 @@
 import type { DebouncedFunc } from 'lodash';
 import throttle from 'lodash.throttle';
-import useRefCallback from './useRefCallback';
-import useMemoDestructor from './useMemoDestructor';
+import { useRefCallback } from './useRefCallback';
+import { useMemoDestructor } from './useMemoDestructor';
 
-export default function useThrottleCallback<
+export function useThrottleCallback<
   T extends AnyFunction | undefined,
   C extends Exclude<ThisParameterType<NonNullable<T>>, unknown> = Exclude<
     ThisParameterType<NonNullable<T>>,

@@ -5,7 +5,7 @@ export interface UseLockBodyScrollProps {
   enabled?: boolean;
 }
 
-export default function useLockBodyScroll({ enabled = true }: UseLockBodyScrollProps = {}): void {
+export function useLockBodyScroll({ enabled = true }: UseLockBodyScrollProps = {}): void {
   useLayoutEffect(() => {
     let originalStyle: string;
     if (enabled) {

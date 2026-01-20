@@ -1,21 +1,22 @@
-import React from 'react';
+/* eslint-disable react-hooks/refs */
+import { useRef } from 'react';
 
 type UpdateRef<A, B> = (nextValue: A, prevValue: A) => B;
 
 const nullValue = Symbol.for('@@__useUpdatedRef_initial');
 
-function useUpdatedRef<T>(value: T, update?: UpdateRef<T, T>): React.MutableRefObject<T>;
+export function useUpdatedRef<T>(value: T, update?: UpdateRef<T, T>): React.MutableRefObject<T>;
 
-function useUpdatedRef<T>(
+export function useUpdatedRef<T>(
   value: T | null,
   update?: UpdateRef<T | null, T | null>
 ): React.RefObject<T>;
 
-function useUpdatedRef<T>(
+export function useUpdatedRef<T>(
   value: T | undefined | null,
   update?: UpdateRef<T | undefined | null, T | undefined | null>
 ): unknown {
-  const ref = React.useRef(nullValue as typeof value);
+  const ref = useRef(nullValue as typeof value);
   if (ref.current === nullValue) {
     ref.current = value;
   }
@@ -25,5 +26,3 @@ function useUpdatedRef<T>(
   }
   return ref;
 }
-
-export default useUpdatedRef;

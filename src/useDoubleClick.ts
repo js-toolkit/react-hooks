@@ -1,7 +1,7 @@
 import React from 'react';
 import { debounce } from '@js-toolkit/utils/debounce';
-import useMemoDestructor from './useMemoDestructor';
-import useRefCallback from './useRefCallback';
+import { useMemoDestructor } from './useMemoDestructor';
+import { useRefCallback } from './useRefCallback';
 
 type BaseEvent = PartialSome<Pick<React.UIEvent, 'timeStamp' | 'detail' | 'persist'>, 'persist'>;
 type BaseHandler<E> = (event: E) => any;
@@ -20,10 +20,10 @@ export interface UseDoubleClickProps<
   readonly onDoubleClick: H;
 }
 
-export default function useDoubleClick<
-  E extends BaseEvent,
-  H extends BaseHandler<E> = BaseHandler<E>,
->(factory: () => UseDoubleClickProps<E, H>, deps: React.DependencyList = []): H {
+export function useDoubleClick<E extends BaseEvent, H extends BaseHandler<E> = BaseHandler<E>>(
+  factory: () => UseDoubleClickProps<E, H>,
+  deps: React.DependencyList = []
+): H {
   const {
     onClick,
     debounceClick,

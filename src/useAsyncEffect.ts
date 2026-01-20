@@ -1,7 +1,7 @@
-import React from 'react';
+import { useEffect } from 'react';
 
-export default function useAsyncEffect(effect: VoidFunction, deps?: React.DependencyList): void {
-  React.useEffect(() => {
+export function useAsyncEffect(effect: VoidFunction, deps?: React.DependencyList): void {
+  useEffect(() => {
     const timer = setTimeout(effect, 0);
     return () => {
       clearTimeout(timer);

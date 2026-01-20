@@ -1,7 +1,7 @@
 import { type RefObject, useEffect, useRef, useState } from 'react';
 import { noop } from '@js-toolkit/utils/noop';
 import { FullscreenController } from '@js-toolkit/web-utils/FullscreenController';
-import useUpdatedRef from './useUpdatedRef';
+import { useUpdatedRef } from './useUpdatedRef';
 
 export interface UseFullscreenOptions extends FullscreenController.RequestOptions {
   videoRef?: RefObject<HTMLVideoElement>;
@@ -11,7 +11,7 @@ export interface UseFullscreenOptions extends FullscreenController.RequestOption
   onError?: (error: unknown) => void;
 }
 
-export default function useFullscreen(
+export function useFullscreen(
   refOrController: RefObject<Element> | FullscreenController,
   on: boolean,
   { videoRef, async, onChange, onError, ...fullscreenOptions }: UseFullscreenOptions = {}

@@ -1,7 +1,7 @@
-import React from 'react';
-import useFirstMount from './useFirstMount';
-import useUpdate from './useUpdate';
-import useRefCallback from './useRefCallback';
+import { useRef } from 'react';
+import { useFirstMount } from './useFirstMount';
+import { useUpdate } from './useUpdate';
+import { useRefCallback } from './useRefCallback';
 
 export interface SetRefStateOptions {
   /** Do not re-render after state set. Defaults to false. */
@@ -11,22 +11,17 @@ export interface SetRefStateOptions {
 }
 
 export type UpdateState<S> = (
-  patch: IfExtends<
-    S,
-    ReadonlyArray<unknown> | AnyFunction,
-    S,
-    IfExtends<S, AnyObject, Partial<S>, S>
-  >,
+  patch: IfExtends<S, readonly unknown[] | AnyFunction, S, IfExtends<S, AnyObject, Partial<S>, S>>,
   options?: SetRefStateOptions
 ) => void;
 
-export default function useRefState<S = undefined>(): [
+export function useRefState<S = undefined>(): [
   getState: () => S | undefined,
   setState: (nextState: React.SetStateAction<S | undefined>, options?: SetRefStateOptions) => void,
   patch: UpdateState<S | undefined>,
 ];
 
-export default function useRefState<S>(
+export function useRefState<S>(
   initialState: S | (() => S)
 ): [
   getState: () => S,
@@ -34,7 +29,7 @@ export default function useRefState<S>(
   patch: UpdateState<S>,
 ];
 
-// export default function useRefState<S>(
+// export function useRefState<S>(
 //   state: S | ((prev: S | undefined) => S),
 //   updateStateDeps: React.DependencyList
 // ): [
@@ -43,7 +38,7 @@ export default function useRefState<S>(
 //   patch: UpdateState<S>
 // ];
 
-export default function useRefState<S>(
+export function useRefState<S>(
   initialState?: S | (() => S)
   // updateStateDeps: React.DependencyList = []
 ): [
@@ -53,7 +48,7 @@ export default function useRefState<S>(
 ] {
   const update = useUpdate();
   const firstMount = useFirstMount();
-  const stateRef = React.useRef<S>(undefined);
+  const stateRef = useRef<S>(undefined);
 
   if (firstMount) {
     stateRef.current =

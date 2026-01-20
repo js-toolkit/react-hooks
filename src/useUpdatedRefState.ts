@@ -1,17 +1,17 @@
 import { useMemo } from 'react';
-import useRefState from './useRefState';
+import { useRefState } from './useRefState';
 
-export default function useUpdatedRefState<S = undefined>(
+export function useUpdatedRefState<S = undefined>(
   state?: undefined,
   updateStateDeps?: React.DependencyList
 ): [getState: () => S | undefined, setState: React.Dispatch<React.SetStateAction<S | undefined>>];
 
-export default function useUpdatedRefState<S>(
+export function useUpdatedRefState<S>(
   state: S | ((prevState?: S) => S),
   updateStateDeps?: React.DependencyList
 ): [getState: () => S, setState: React.Dispatch<React.SetStateAction<S>>];
 
-export default function useUpdatedRefState<S>(
+export function useUpdatedRefState<S>(
   state?: S | ((prevState?: S) => S),
   updateStateDeps: React.DependencyList = []
 ): [getState: () => S | undefined, setState: React.Dispatch<React.SetStateAction<S | undefined>>] {

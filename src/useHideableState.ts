@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import useUpdatedRefState from './useUpdatedRefState';
+import { useUpdatedRefState } from './useUpdatedRefState';
 
 export interface HideableState {
   readonly enabled: boolean;
@@ -14,17 +14,17 @@ export type UseHideableStateResult<S> = HideableState & {
   getState: () => S & HideableState;
 };
 
-export default function useHideableState<S = HideableState>(
+export function useHideableState<S = HideableState>(
   state: S & HideableState,
   updateStateDeps?: React.DependencyList
 ): UseHideableStateResult<S>;
 
-export default function useHideableState<S = HideableState>(
+export function useHideableState<S = HideableState>(
   state: (prevState?: S & HideableState) => S & HideableState,
   updateStateDeps?: React.DependencyList
 ): UseHideableStateResult<S>;
 
-export default function useHideableState<S = HideableState>(
+export function useHideableState<S = HideableState>(
   state: (S & HideableState) | ((prevState?: S & HideableState) => S & HideableState),
   updateStateDeps: React.DependencyList = []
 ): UseHideableStateResult<S> {

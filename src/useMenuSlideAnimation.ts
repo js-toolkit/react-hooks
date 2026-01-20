@@ -1,6 +1,6 @@
 import { getInnerYDimensions } from '@js-toolkit/web-utils/getInnerYDimensions';
-import useRefCallback from './useRefCallback';
-import useSlideAnimationDirection from './useSlideAnimationDirection';
+import { useRefCallback } from './useRefCallback';
+import { useSlideAnimationDirection } from './useSlideAnimationDirection';
 
 type SlideDirection = 'left' | 'right';
 
@@ -13,8 +13,9 @@ export interface UseMenuSlideAnimationProps<S> {
   readonly transitionEasing?: string;
 }
 
-export interface UseMenuSlideAnimationResult<S>
-  extends Required<Pick<UseMenuSlideAnimationProps<S>, 'transitionDuration' | 'transitionEasing'>> {
+export interface UseMenuSlideAnimationResult<S> extends Required<
+  Pick<UseMenuSlideAnimationProps<S>, 'transitionDuration' | 'transitionEasing'>
+> {
   readonly onRootEntered: (node: HTMLElement) => void;
   readonly onContentEnter: (node: HTMLElement) => void;
   readonly onContentEntered: (node: HTMLElement) => void;
@@ -25,7 +26,7 @@ export interface UseMenuSlideAnimationResult<S>
   readonly currentState: S;
 }
 
-export default function useMenuSlideAnimation<S>(
+export function useMenuSlideAnimation<S>(
   {
     rootRef,
     contentRef,
@@ -74,7 +75,7 @@ export default function useMenuSlideAnimation<S>(
   const onContentExit = useRefCallback((node0: HTMLElement) => {
     const node = node0;
     const transition = `opacity ${transitionDuration / 2}ms ${transitionEasing}`;
-    if (node.style.transition.indexOf(transition) < 0) {
+    if (!node.style.transition.includes(transition)) {
       node.style.transition += (node.style.transition ? ', ' : '') + transition;
     }
     node.style.opacity = '0';
@@ -87,7 +88,7 @@ export default function useMenuSlideAnimation<S>(
     const { current: content } = contentRef;
     if (!content) return;
     const transition = `width ${transitionDuration}ms ${transitionEasing}, height ${transitionDuration}ms ${transitionEasing}`;
-    if (root.style.transition.indexOf(transition) < 0) {
+    if (!root.style.transition.includes(transition)) {
       root.style.transition += (root.style.transition ? ', ' : '') + transition;
     }
     window.requestAnimationFrame(() => {

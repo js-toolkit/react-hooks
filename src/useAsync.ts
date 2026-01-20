@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, type DependencyList } from 'react';
-import useIsMounted from './useIsMounted';
-import useRefState from './useRefState';
+import { useIsMounted } from './useIsMounted';
+import { useRefState } from './useRefState';
 
 type AsyncState<T> =
   | {
@@ -35,7 +35,7 @@ type UseAsyncResult<F extends AnyAsyncFunction> = [
   getState: () => StateByAsyncFn<F>,
 ];
 
-export default function useAsync<F extends AnyAsyncFunction>(
+export function useAsync<F extends AnyAsyncFunction>(
   factory: () => UseAsyncProps<F> | F,
   deps: DependencyList = []
 ): UseAsyncResult<F> {

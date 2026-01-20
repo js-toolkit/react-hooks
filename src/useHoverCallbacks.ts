@@ -1,5 +1,5 @@
-import React from 'react';
-import useRefCallback from './useRefCallback';
+import { useRef } from 'react';
+import { useRefCallback } from './useRefCallback';
 
 export type UseHoverCallbacksProps<T> = Pick<
   React.HTMLAttributes<T>,
@@ -11,7 +11,7 @@ export type UseHoverCallbacksResult<T> = Required<UseHoverCallbacksProps<T>>;
 /**
  * Prevents mouseenter/mouseleave events on touch.
  */
-export default function useHoverCallbacks<T = Element>({
+export function useHoverCallbacks<T = Element>({
   onMouseEnter,
   onMouseLeave,
   onTouchStart,
@@ -19,7 +19,7 @@ export default function useHoverCallbacks<T = Element>({
   onContextMenu,
 }: UseHoverCallbacksProps<T>): UseHoverCallbacksResult<T> {
   /** To prevent mouseenter on touch. */
-  const isTouchingRef = React.useRef(false);
+  const isTouchingRef = useRef(false);
 
   const touchStartHandler = useRefCallback<React.TouchEventHandler<T>>((event) => {
     // console.log('touchStart', event.nativeEvent.type);

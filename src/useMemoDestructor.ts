@@ -4,7 +4,7 @@ import { useEffect, useMemo } from 'react';
  * It uses `useEffect` to destruct a value.
  * Be careful: use destructor only for destruct prev created value.
  */
-export default function useMemoDestructor<T>(
+export function useMemoDestructor<T>(
   factory: () => [value: T, destructor: (value: T) => void],
   deps: React.DependencyList = []
 ): T {
@@ -16,7 +16,7 @@ export default function useMemoDestructor<T>(
   return value;
 }
 
-// export default function useMemoCleaner<T>(
+// export function useMemoCleaner<T>(
 //   factory: () => [value: T, clean: (value: T, unmount: boolean) => void],
 //   deps: React.DependencyList | undefined
 // ): T {

@@ -1,9 +1,9 @@
 import { clear } from '@js-toolkit/utils/clear';
-import useMemoDestructor from './useMemoDestructor';
+import { useMemoDestructor } from './useMemoDestructor';
 
 type UseRafCallbackResult<T extends AnyFunction> = T & { cancelRaf: () => void };
 
-export default function useRafCallback<T extends AnyFunction>(
+export function useRafCallback<T extends AnyFunction>(
   callback: T,
   deps: React.DependencyList
 ): UseRafCallbackResult<T> {

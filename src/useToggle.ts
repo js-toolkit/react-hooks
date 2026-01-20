@@ -1,7 +1,7 @@
-import useRefCallback from './useRefCallback';
-import useRefState from './useRefState';
+import { useRefCallback } from './useRefCallback';
+import { useRefState } from './useRefState';
 
-export default function useToggle(
+export function useToggle(
   initialValue = false
 ): [value: boolean, toggle: (value?: unknown) => void, on: VoidFunction, off: VoidFunction] {
   const [get, set] = useRefState(initialValue);
@@ -11,7 +11,7 @@ export default function useToggle(
   const off = useRefCallback(() => set(false));
 
   const toggle = useRefCallback((v?: unknown) => {
-    const nextValue = v == null ? !get() : v;
+    const nextValue = v ?? !get();
     if (nextValue) on();
     else off();
   });

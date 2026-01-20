@@ -1,8 +1,8 @@
 import { useEffect, useMemo } from 'react';
 import { debounce, type DebouncedFunc } from '@js-toolkit/utils/debounce';
-import useRefState from './useRefState';
-import useUpdatedRef from './useUpdatedRef';
-import useMemoDestructor from './useMemoDestructor';
+import { useRefState } from './useRefState';
+import { useUpdatedRef } from './useUpdatedRef';
+import { useMemoDestructor } from './useMemoDestructor';
 
 export interface ActivateOptions {
   /** Ignore disabled option. */
@@ -41,7 +41,7 @@ export interface UseAutoToggleProps {
 }
 
 /** Useful for tracking user interaction. */
-export default function useAutoToggle({
+export function useAutoToggle({
   initialValue,
   disabled,
   wait = 3000,

@@ -1,6 +1,6 @@
 import type { SetStateAction, Dispatch } from 'react';
-import useRefCallback from './useRefCallback';
-import useRefState from './useRefState';
+import { useRefCallback } from './useRefCallback';
+import { useRefState } from './useRefState';
 
 export type StateGetter<E, S> = (wrappedOrValue: E) => S;
 
@@ -12,7 +12,7 @@ export function getValue<S extends NonNullValue>(wrappedOrValue: { value: S } | 
   return wrappedOrValue;
 }
 
-export default function useUpdateState<S, E = { value: S } | S>(
+export function useUpdateState<S, E = { value: S } | S>(
   initialState: S | (() => S),
   stateGetter: StateGetter<E, S> = getValue as StateGetter<E, S>
 ): [getState: () => S, setState: Dispatch<SetStateAction<S>>, updateState: UpdateState<E>] {

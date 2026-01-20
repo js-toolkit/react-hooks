@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import useRefState from './useRefState';
+import { useRefState } from './useRefState';
 
 export type PendingTasks<TaskKeys extends string> = { default: number } & PartialRecord<
   TaskKeys,
@@ -15,9 +15,7 @@ export interface UsePendingResult<TaskKeys extends string> {
   resetAll: VoidFunction;
 }
 
-export default function usePendingTasks<
-  TaskKeys extends string = never,
->(): UsePendingResult<TaskKeys> {
+export function usePendingTasks<TaskKeys extends string = never>(): UsePendingResult<TaskKeys> {
   const [getPendingTasks, setPendingTasks] = useRefState<PendingTasks<TaskKeys>>({
     default: 0,
   });

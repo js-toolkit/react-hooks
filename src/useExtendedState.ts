@@ -4,7 +4,7 @@ interface ExtendFactory<S, T, SS extends React.Dispatch<React.SetStateAction<S>>
   (state: { get: () => S; set: SS }): T;
 }
 
-export default function useExtendedState<S, E, SS extends React.Dispatch<React.SetStateAction<S>>>(
+export function useExtendedState<S, E, SS extends React.Dispatch<React.SetStateAction<S>>>(
   stateMethods: [getState: () => S, setState: SS, ...rest: unknown[]],
   extend: ExtendFactory<S, E, SS>
 ): [E, ...typeof stateMethods] {
@@ -17,7 +17,7 @@ export default function useExtendedState<S, E, SS extends React.Dispatch<React.S
   return [extended.current, ...stateMethods];
 }
 
-// export default function useExtendedState<S, E>(
+// export function useExtendedState<S, E>(
 //   state: S | ((prevState?: S) => S),
 //   extend: ExtendFactory<S, E>,
 //   updateStateDeps: React.DependencyList = []

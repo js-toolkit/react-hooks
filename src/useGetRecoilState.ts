@@ -1,6 +1,6 @@
 import { Snapshot, useRecoilCallback } from 'recoil';
 
-export default function useGetRecoilState(): Snapshot['getPromise'] {
+export function useGetRecoilState(): Snapshot['getPromise'] {
   const getState = useRecoilCallback(
     ({ snapshot }): Snapshot['getPromise'] =>
       (store) =>

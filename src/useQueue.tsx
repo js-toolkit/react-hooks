@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Queue } from '@js-toolkit/utils/Queue';
-import useRefCallback from './useRefCallback';
-import useUpdatedRefState from './useUpdatedRefState';
+import { useRefCallback } from './useRefCallback';
+import { useUpdatedRefState } from './useUpdatedRefState';
 
 export type UseQueueResult<T> = [
   queueItem: T | undefined,

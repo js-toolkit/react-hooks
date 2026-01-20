@@ -1,5 +1,5 @@
 import type { SetStateAction, Dispatch } from 'react';
-import useUpdateState, { type StateGetter, type UpdateState } from './useUpdateState';
+import { useUpdateState, type StateGetter, type UpdateState } from './useUpdateState';
 
 export const getInputChangeEventValue: StateGetter<
   React.ChangeEvent<HTMLInputElement> | { value: string } | string,
@@ -13,7 +13,7 @@ export const getInputChangeEventValue: StateGetter<
   throw new Error(`Unsupported event '${String(event)}'`);
 };
 
-export default function useInputState(
+export function useInputState(
   initialState: string | (() => string)
 ): [
   () => string,

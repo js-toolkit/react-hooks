@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { debounce } from '@js-toolkit/utils/debounce';
-import useRefState from './useRefState';
+import { useRefState } from './useRefState';
 
 /** [getActive(), getData(), set(boolean, Data), updateData(Data) cancel()] */
 export type UseToggleDebounceResult<D> = [
@@ -24,7 +24,7 @@ export type UseToggleDebounceProps<D> = {
 // const [a, d] = useToggleDebounce({ initialData: v });
 // const [a, d] = useToggleDebounce({});
 
-export default function useToggleDebounce<D = undefined>(
+export function useToggleDebounce<D = undefined>(
   {
     value: valueProp,
     data: dataProp,

@@ -4,7 +4,7 @@ import {
   getPinchZoomHandlers,
   type GetPinchZoomHandlersOptions,
 } from '@js-toolkit/web-utils/getPinchZoomHandlers';
-import useRefCallback from './useRefCallback';
+import { useRefCallback } from './useRefCallback';
 
 export interface UsePinchZoomProps extends Pick<
   GetPinchZoomHandlersOptions,
@@ -15,7 +15,7 @@ export interface UsePinchZoomProps extends Pick<
   readonly getTargetBounds: () => DOMRect;
 }
 
-export default function usePinchZoom({
+export function usePinchZoom({
   boundsRef,
   disabled,
   acceleration = 1,

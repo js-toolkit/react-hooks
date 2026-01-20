@@ -1,9 +1,10 @@
-import React from 'react';
-import useRefCallback from './useRefCallback';
+/* eslint-disable react-hooks/refs */
+import { useRef } from 'react';
+import { useRefCallback } from './useRefCallback';
 
-export default function useIsFirstMount(): () => boolean {
-  const firstRef = React.useRef(true);
-  const countRef = React.useRef(0);
+export function useIsFirstMount(): () => boolean {
+  const firstRef = useRef(true);
+  const countRef = useRef(0);
 
   if (firstRef.current) {
     countRef.current += 1;

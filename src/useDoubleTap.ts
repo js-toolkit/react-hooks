@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useRef } from 'react';
 type BaseEvent = Pick<React.TouchEvent, 'timeStamp'>;
 type BaseHandler<E> = (event: E) => any;
 
-export default function useDoubleTap<
+export function useDoubleTap<
   E extends BaseEvent,
   H extends BaseHandler<E> = BaseHandler<E>,
 >(

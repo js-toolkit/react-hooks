@@ -1,23 +1,23 @@
-import useRafCallback from './useRafCallback';
-import useRefState, { type SetRefStateOptions } from './useRefState';
+import { useRafCallback } from './useRafCallback';
+import { useRefState, type SetRefStateOptions } from './useRefState';
 
 type SetState<F extends AnyFunction> = ReturnType<typeof useRafCallback<F>>;
 
-export default function useRafState<S = undefined>(): [
+export function useRafState<S = undefined>(): [
   getState: () => S | undefined,
   setState: SetState<
     (nextState: React.SetStateAction<S | undefined>, options?: SetRefStateOptions) => void
   >,
 ];
 
-export default function useRafState<S>(
+export function useRafState<S>(
   initialState: S | (() => S)
 ): [
   getState: () => S,
   setState: SetState<(nextState: React.SetStateAction<S>, options?: SetRefStateOptions) => void>,
 ];
 
-export default function useRafState<S>(
+export function useRafState<S>(
   initialState?: S | (() => S)
 ): [
   getState: () => S | undefined,

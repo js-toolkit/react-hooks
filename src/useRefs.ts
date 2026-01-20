@@ -1,7 +1,6 @@
-import type React from 'react';
-import useRefCallback from './useRefCallback';
+import { useRefCallback } from './useRefCallback';
 
-export default function useRefs<T>(...refs: (React.Ref<T> | undefined)[]): React.RefCallback<T> {
+export function useRefs<T>(...refs: (React.Ref<T> | undefined)[]): React.RefCallback<T> {
   return useRefCallback<React.RefCallback<T>>((instance) => {
     const unmounts = new Array<VoidFunction>(refs.length);
     refs.forEach((r, i) => {

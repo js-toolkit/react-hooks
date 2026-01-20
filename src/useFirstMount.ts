@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/refs */
 import { useRef } from 'react';
 
-export default function useFirstMount(): boolean {
+export function useFirstMount(): boolean {
   const firstRef = useRef(true);
 
   if (firstRef.current) {

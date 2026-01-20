@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react';
 
 /** Uses `useMemo` under the hood. */
-export default function useUpdatedRefValue<S>(
+export function useUpdatedRefValue<S>(
   value: S | ((prevValue?: S) => S),
   deps: React.DependencyList = []
 ): React.MutableRefObject<S> {

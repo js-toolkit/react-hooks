@@ -5,15 +5,13 @@ import {
   type GetScreenSizeProps,
   type ScreenSize,
 } from '@js-toolkit/web-utils/getScreenSize';
-import useRefState from './useRefState';
+import { useRefState } from './useRefState';
 
 export type { ScreenSize };
 
 export type UseScreenSizeProps = GetScreenSizeProps;
 
-export default function useScreenSize({
-  respectOrientation = true,
-}: UseScreenSizeProps = {}): ScreenSize {
+export function useScreenSize({ respectOrientation = true }: UseScreenSizeProps = {}): ScreenSize {
   const [getSize, setSize] = useRefState<ScreenSize>(getScreenSize);
 
   useEffect(() => {

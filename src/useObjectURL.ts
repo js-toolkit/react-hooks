@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 
-export default function useObjectURL(
+export function useObjectURL(
   getObject: () => Blob,
   deps: React.DependencyList = []
 ): string {

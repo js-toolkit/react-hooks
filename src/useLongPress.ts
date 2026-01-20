@@ -1,10 +1,9 @@
-import React from 'react';
 import { noop } from '@js-toolkit/utils/noop';
 import { hasIn } from '@js-toolkit/utils/hasIn';
 import { debounce } from '@js-toolkit/utils/debounce';
 // import { preventDefault } from '@js-toolkit/web-utils/preventDefault';
-import useMemoDestructor from './useMemoDestructor';
-import useRefCallback from './useRefCallback';
+import { useMemoDestructor } from './useMemoDestructor';
+import { useRefCallback } from './useRefCallback';
 
 // type BaseEvent = PartialSome<Pick<React.TouchEvent, 'timeStamp' | 'detail' | 'persist'>, 'persist'>;
 type BaseEvent = PartialSome<
@@ -189,7 +188,7 @@ function trueFn(): boolean {
   return true;
 }
 
-export default function useLongPress<E extends BaseEvent, D = unknown>(
+export function useLongPress<E extends BaseEvent, D = unknown>(
   callback: (event: E) => D,
   {
     delay = 500,

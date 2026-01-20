@@ -1,10 +1,7 @@
 import { useEffect } from 'react';
-import useIsFirstMount from './useIsFirstMount';
+import { useIsFirstMount } from './useIsFirstMount';
 
-export default function useUpdateEffect(
-  effect: React.EffectCallback,
-  deps?: React.DependencyList
-): void {
+export function useUpdateEffect(effect: React.EffectCallback, deps?: React.DependencyList): void {
   const isFirstMount = useIsFirstMount();
 
   // eslint-disable-next-line consistent-return

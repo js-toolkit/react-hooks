@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react';
-import useUpdatedRefState from './useUpdatedRefState';
+import { useUpdatedRefState } from './useUpdatedRefState';
 
 type SlideDirection = 'left' | 'right';
 
@@ -14,7 +14,7 @@ export interface UseSlideAnimationDirectionResult<S> {
   readonly currentState: S;
 }
 
-export default function useSlideAnimationDirection<S>(
+export function useSlideAnimationDirection<S>(
   { nextLevel = 0, nextState }: UseSlideAnimationDirectionProps<S>,
   deps: React.DependencyList = []
 ): UseSlideAnimationDirectionResult<S> {
