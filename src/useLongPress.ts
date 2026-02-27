@@ -58,6 +58,7 @@ function isPointerEventLike(
  * onPointerDown={longPress.onDown}
  * onPointerUp={longPress.onUp}
  * onPointerCancel={longPress.onUp}
+ * onLostPointerCapture={longPress.onUp}
  * onContextMenu={longPress.onUp} // onPointerUp is not invoked if contextmenu is not prevented.
  * ```
  */
@@ -148,10 +149,12 @@ export function getLongPressHandlers<E extends BaseEvent, D = unknown>(
       if (pressed) {
         // Ignore next pointers if callbackInvoked.
         if (callbackInvoked) return;
+        // Cancel the previous press.
         halt(pressed);
         releaseCapture(pressed);
         pressed = undefined;
       }
+      // Skip if more than one pointer/touch is pressed.
       if (pointerCount > 1) return;
       // if (isPointerEventLike(event)) {
       //   const events = pointersCache.get(event.pointerId) ?? [];
