@@ -1,8 +1,8 @@
 {
   "extends": "@js-toolkit/configs/ts/common.tsconfig.json",
   "compilerOptions": {
-    "module": "es2015",
-    "isolatedModules": false,
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "outDir": "dist",
     "baseUrl": ".",
     "types": ["node"],
@@ -11,7 +11,5 @@
     "incremental": true,
     "diagnostics": true
   },
-  "include": ["src"],
-  "exclude": ["src/eslint.ts"],
-  "references": [{ "path": "./tsconfig.cjs.json" }]
+  "include": ["src"]
 }

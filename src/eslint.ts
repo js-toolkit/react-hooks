@@ -1,4 +1,7 @@
-const config: import('eslint').Linter.Config[] = [
+/* eslint-disable import-x/no-import-module-exports */
+import type { Linter } from 'eslint';
+
+const config: Linter.Config[] = [
   {
     rules: {
       'react-hooks/exhaustive-deps': [
@@ -14,6 +17,7 @@ const config: import('eslint').Linter.Config[] = [
 
 export default config;
 
+// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = config;
 }
