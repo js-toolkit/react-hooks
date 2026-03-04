@@ -12,5 +12,8 @@ const config: import('eslint').Linter.Config[] = [
   },
 ];
 
-module.exports = config;
 export default config;
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = config;
+}
